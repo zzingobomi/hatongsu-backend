@@ -1,34 +1,34 @@
 version: '3.1'
 
 services:
-  gateway:
-    build:
-      context: .
-      dockerfile: ./apps/gateway/Dockerfile
-      target: development
-    command: pnpm run start:dev gateway
-    env_file:
-      - ./apps/gateway/.env
-    ports:
-      - '4000:4000'
-    volumes:
-      - .:/usr/src/app
-      - /usr/src/app/node_modules
+  # gateway:
+  #   build:
+  #     context: .
+  #     dockerfile: ./apps/gateway/Dockerfile
+  #     target: development
+  #   command: pnpm run start:dev gateway
+  #   env_file:
+  #     - ./apps/gateway/.env
+  #   ports:
+  #     - '4000:4000'
+  #   volumes:
+  #     - .:/usr/src/app
+  #     - /usr/src/app/node_modules
 
-  user:
-    build:
-      context: .
-      dockerfile: ./apps/user/Dockerfile
-      target: development
-    command: pnpm run start:dev user
-    depends_on:
-      postgres:
-        condition: service_healthy
-    env_file:
-      - ./apps/user/.env
-    volumes:
-      - .:/usr/src/app
-      - /usr/src/app/node_modules
+  # user:
+  #   build:
+  #     context: .
+  #     dockerfile: ./apps/user/Dockerfile
+  #     target: development
+  #   command: pnpm run start:dev user
+  #   depends_on:
+  #     postgres:
+  #       condition: service_healthy
+  #   env_file:
+  #     - ./apps/user/.env
+  #   volumes:
+  #     - .:/usr/src/app
+  #     - /usr/src/app/node_modules
 
   postgres:
     image: postgres:16

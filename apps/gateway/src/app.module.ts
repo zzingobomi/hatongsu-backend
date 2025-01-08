@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { HealthModule } from './health/health.module';
@@ -8,6 +8,8 @@ import { join } from 'path';
 import { AuthModule } from './auth/auth.module';
 import appConfig from './config/app.config';
 import { AppConfig } from './config/app-config.type';
+import { UserModule } from './user/user.module';
+import { BearerTokenMiddleware } from './auth/middleware/bearer-token.middleware';
 
 @Module({
   imports: [
@@ -39,6 +41,11 @@ import { AppConfig } from './config/app-config.type';
     HealthModule,
     VersionModule,
     AuthModule,
+    UserModule,
   ],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(BearerTokenMiddleware).forRoutes('user');
+  }
+}

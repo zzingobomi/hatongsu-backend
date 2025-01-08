@@ -18,6 +18,7 @@ export const ERROR_MESSAGES = {
   INVALID_REFRESH_TOKEN: 'It is not a Refresh token',
   INVALID_ACCESS_TOKEN: 'It is not an Access token',
   TOKEN_EXPIRED: 'Token has expired!',
+  TOKEN_GUARD_MISSING: 'TokenGuard is missing!',
 
   // User 관련 오류 메시지
   USER_NOT_FOUND: 'User does not exist!',
