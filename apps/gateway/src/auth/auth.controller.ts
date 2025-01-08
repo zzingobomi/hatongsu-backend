@@ -19,6 +19,7 @@ export class AuthController {
     @Authorization() credentials: string,
     @Body() registerDto: RegisterDto,
   ) {
+    console.log('register', credentials);
     if (credentials === null) {
       throw new UnauthorizedException(ERROR_MESSAGES.UNAUTHORIZED_TOKEN);
     }

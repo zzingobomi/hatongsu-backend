@@ -10,8 +10,9 @@ import { User } from '../user/entity/user.entity';
 import { Repository } from 'typeorm';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
-import * as bcrypt from 'bcrypt';
 import { ERROR_MESSAGES, SUCCESS_MESSAGES } from '@app/common';
+import { AppConfig } from '../config/app-config.type';
+import * as bcrypt from 'bcrypt';
 
 export enum TokenType {
   BASIC = 'basic',
@@ -26,10 +27,10 @@ export enum AuthTokenType {
 @Injectable()
 export class AuthService {
   constructor(
+    private configService: ConfigService<{ app: AppConfig }>,
     private readonly userService: UserService,
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
-    private readonly configService: ConfigService,
     private readonly jwtService: JwtService,
   ) {}
 
@@ -98,11 +99,14 @@ export class AuthService {
     }
 
     try {
-      const payload = await this.jwtService.verifyAsync(token, {
-        secret: this.configService.getOrThrow<string>(
-          isRefreshToken ? 'REFRESH_TOKEN_SECRET' : 'ACCESS_TOKEN_SECRET',
-        ),
-      });
+      const secret = isRefreshToken
+        ? this.configService.getOrThrow('app.refreshTokenSecret', {
+            infer: true,
+          })
+        : this.configService.getOrThrow('app.accessTokenSecret', {
+            infer: true,
+          });
+      const payload = await this.jwtService.verifyAsync(token, { secret });
 
       if (!isRefreshToken) {
         if (payload.type !== AuthTokenType.ACCESS) {
@@ -157,11 +161,13 @@ export class AuthService {
   }
 
   async issueToken(user: any, isRefreshToken: boolean) {
-    const accessTokenSecret = this.configService.getOrThrow<string>(
-      'ACCESS_TOKEN_SECRET',
+    const accessTokenSecret = this.configService.getOrThrow(
+      'app.accessTokenSecret',
+      { infer: true },
     );
-    const refreshTokenSecret = this.configService.getOrThrow<string>(
-      'REFRESH_TOKEN_SECRET',
+    const refreshTokenSecret = this.configService.getOrThrow(
+      'app.refreshTokenSecret',
+      { infer: true },
     );
 
     return this.jwtService.signAsync(
@@ -172,7 +178,9 @@ export class AuthService {
       },
       {
         secret: isRefreshToken ? refreshTokenSecret : accessTokenSecret,
-        expiresIn: '3600h',
+        expiresIn: this.configService.getOrThrow('app.tokenExpireTime', {
+          infer: true,
+        }),
       },
     );
   }

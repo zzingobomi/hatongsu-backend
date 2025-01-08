@@ -3,24 +3,21 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { UserModule } from './user/user.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './auth/auth.module';
-import * as Joi from 'joi';
+import appConfig from './config/app.config';
+import { AppConfig } from './config/app-config.type';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      validationSchema: Joi.object({
-        TCP_PORT: Joi.number().required(),
-        GRPC_URL: Joi.string().required(),
-        DB_URL: Joi.string().required(),
-        ACCESS_TOKEN_SECRET: Joi.string().required(),
-        REFRESH_TOKEN_SECRET: Joi.string().required(),
-      }),
+      load: [appConfig],
+      envFilePath:
+        process.env.NODE_ENV === 'local' ? `./apps/user/.env.local` : undefined,
     }),
     TypeOrmModule.forRootAsync({
-      useFactory: (configService: ConfigService) => ({
+      useFactory: (configService: ConfigService<{ app: AppConfig }>) => ({
         type: 'postgres',
-        url: configService.getOrThrow('DB_URL'),
+        url: configService.getOrThrow('app.dbUrl', { infer: true }),
         autoLoadEntities: true,
         synchronize: true,
       }),

@@ -6,29 +6,29 @@ import { VersionModule } from './version/version.module';
 import { USER_SERVICE, UserMicroservice } from '@app/common';
 import { join } from 'path';
 import { AuthModule } from './auth/auth.module';
-import * as Joi from 'joi';
+import appConfig from './config/app.config';
+import { AppConfig } from './config/app-config.type';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      validationSchema: Joi.object({
-        HTTP_PORT: Joi.number().required(),
-        USER_HOST: Joi.string().required(),
-        USER_TCP_PORT: Joi.number().required(),
-        USER_GRPC_URL: Joi.string().required(),
-      }),
+      load: [appConfig],
+      envFilePath:
+        process.env.NODE_ENV === 'local'
+          ? `./apps/gateway/.env.local`
+          : undefined,
     }),
     ClientsModule.registerAsync({
       clients: [
         {
           name: USER_SERVICE,
-          useFactory: (configService: ConfigService) => ({
+          useFactory: (configService: ConfigService<{ app: AppConfig }>) => ({
             transport: Transport.GRPC,
             options: {
               package: UserMicroservice.protobufPackage,
               protoPath: join(process.cwd(), 'proto/user.proto'),
-              url: configService.getOrThrow('USER_GRPC_URL'),
+              url: configService.getOrThrow('app.userGrpcUrl', { infer: true }),
             },
           }),
           inject: [ConfigService],
