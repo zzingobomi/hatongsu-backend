@@ -36,6 +36,15 @@
       "compilerOptions": {
         "tsConfigPath": "libs/common/tsconfig.lib.json"
       }
+    },
+    "album": {
+      "type": "application",
+      "root": "apps/album",
+      "entryFile": "main",
+      "sourceRoot": "apps/album/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/album/tsconfig.app.json"
+      }
     }
   }
 }

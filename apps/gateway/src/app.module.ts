@@ -10,6 +10,7 @@ import appConfig from './config/app.config';
 import { AppConfig } from './config/app-config.type';
 import { UserModule } from './user/user.module';
 import { BearerTokenMiddleware } from './auth/middleware/bearer-token.middleware';
+import { FileModule } from './file/file.module';
 
 @Module({
   imports: [
@@ -42,6 +43,7 @@ import { BearerTokenMiddleware } from './auth/middleware/bearer-token.middleware
     VersionModule,
     AuthModule,
     UserModule,
+    FileModule,
   ],
 })
 export class AppModule implements NestModule {
