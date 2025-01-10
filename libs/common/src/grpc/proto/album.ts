@@ -11,36 +11,35 @@ import { Observable } from "rxjs";
 
 export const protobufPackage = "album";
 
-export interface ImageUploadRequest {
-  filename: string;
-  content: Uint8Array;
+export interface ImageRequest {
+  id: string;
 }
 
-export interface UploadResponse {
-  message: string;
+export interface ImageResponse {
+  filename: string;
 }
 
 export const ALBUM_PACKAGE_NAME = "album";
 
 export interface AlbumServiceClient {
-  uploadImage(request: Observable<ImageUploadRequest>, metadata?: Metadata): Observable<UploadResponse>;
+  getImage(request: ImageRequest, metadata?: Metadata): Observable<ImageResponse>;
 }
 
 export interface AlbumServiceController {
-  uploadImage(
-    request: Observable<ImageUploadRequest>,
+  getImage(
+    request: ImageRequest,
     metadata?: Metadata,
-  ): Promise<UploadResponse> | Observable<UploadResponse> | UploadResponse;
+  ): Promise<ImageResponse> | Observable<ImageResponse> | ImageResponse;
 }
 
 export function AlbumServiceControllerMethods() {
   return function (constructor: Function) {
-    const grpcMethods: string[] = [];
+    const grpcMethods: string[] = ["getImage"];
     for (const method of grpcMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
       GrpcMethod("AlbumService", method)(constructor.prototype[method], method, descriptor);
     }
-    const grpcStreamMethods: string[] = ["uploadImage"];
+    const grpcStreamMethods: string[] = [];
     for (const method of grpcStreamMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
       GrpcStreamMethod("AlbumService", method)(constructor.prototype[method], method, descriptor);

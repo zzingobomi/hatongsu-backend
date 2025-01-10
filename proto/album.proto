@@ -2,15 +2,14 @@ syntax = "proto3";
 
 package album;
 
-service AlbumService {        
-    rpc UploadImage(stream ImageUploadRequest) returns (UploadResponse);        
+service AlbumService {
+    rpc GetImage(ImageRequest) returns (ImageResponse);
 }
 
-message ImageUploadRequest {
-    string filename = 1;
-    bytes content = 2;
+message ImageRequest {
+    string id = 1;
 }
 
-message UploadResponse {
-    string message = 1;
+message ImageResponse {
+    string filename = 1;    
 }

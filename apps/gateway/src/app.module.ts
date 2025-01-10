@@ -3,7 +3,11 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { HealthModule } from './health/health.module';
 import { VersionModule } from './version/version.module';
-import { USER_SERVICE, UserMicroservice } from '@app/common';
+import {
+  ALBUM_QUEUE_SERVICE,
+  USER_SERVICE,
+  UserMicroservice,
+} from '@app/common';
 import { join } from 'path';
 import { AuthModule } from './auth/auth.module';
 import appConfig from './config/app.config';
@@ -11,6 +15,7 @@ import { AppConfig } from './config/app-config.type';
 import { UserModule } from './user/user.module';
 import { BearerTokenMiddleware } from './auth/middleware/bearer-token.middleware';
 import { FileModule } from './file/file.module';
+import { ALBUM_QUEUE } from '@app/common/const/queues';
 
 @Module({
   imports: [
@@ -32,6 +37,21 @@ import { FileModule } from './file/file.module';
               package: UserMicroservice.protobufPackage,
               protoPath: join(process.cwd(), 'proto/user.proto'),
               url: configService.getOrThrow('app.userGrpcUrl', { infer: true }),
+            },
+          }),
+          inject: [ConfigService],
+        },
+        {
+          name: ALBUM_QUEUE_SERVICE,
+          useFactory: (configService: ConfigService<{ app: AppConfig }>) => ({
+            transport: Transport.RMQ,
+            options: {
+              urls: [
+                configService.getOrThrow<string>('app.albumRabbitmqUrl', {
+                  infer: true,
+                }),
+              ],
+              queue: ALBUM_QUEUE,
             },
           }),
           inject: [ConfigService],

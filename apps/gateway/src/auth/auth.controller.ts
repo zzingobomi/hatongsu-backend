@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { Authorization } from './decorator/authorization.decorator';
-import { ERROR_MESSAGES } from '@app/common/const/error.messages';
+import { ERROR_MESSAGES } from '@app/common/const/messages';
 import { RegisterDto } from './dto/register.dto';
 
 @Controller('auth')

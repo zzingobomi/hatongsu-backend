@@ -5,11 +5,13 @@ import { ConfigService } from '@nestjs/config';
 import { AlbumMicroservice } from '@app/common';
 import { join } from 'path';
 import { AppConfig } from './config/app-config.type';
+import { ALBUM_QUEUE } from '@app/common/const/queues';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const configService = app.get(ConfigService<{ app: AppConfig }>);
 
+  // gRPC 마이크로서비스 설정
   app.connectMicroservice<MicroserviceOptions>({
     transport: Transport.GRPC,
     options: {
@@ -19,8 +21,21 @@ async function bootstrap() {
     },
   });
 
-  await app.init();
+  // RabbitMQ 마이크로서비스 설정
+  app.connectMicroservice<MicroserviceOptions>({
+    transport: Transport.RMQ,
+    options: {
+      urls: [
+        configService.getOrThrow<string>('app.rabbitmqUrl', { infer: true }),
+      ],
+      queue: ALBUM_QUEUE,
+      queueOptions: {
+        durable: true,
+      },
+    },
+  });
 
+  await app.init();
   await app.startAllMicroservices();
 }
 bootstrap();

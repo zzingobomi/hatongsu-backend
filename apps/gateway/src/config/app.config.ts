@@ -11,6 +11,9 @@ class EnvironmentVariablesValidator {
 
   @IsString()
   USER_GRPC_URL: string;
+
+  @IsString()
+  ALBUM_RABBITMQ_URL: string;
 }
 
 export default registerAs<AppConfig>('app', () => {
@@ -19,5 +22,6 @@ export default registerAs<AppConfig>('app', () => {
   return {
     httpPort: parseInt(process.env.HTTP_PORT, 10),
     userGrpcUrl: process.env.USER_GRPC_URL,
+    albumRabbitmqUrl: process.env.ALBUM_RABBITMQ_URL,
   };
 });

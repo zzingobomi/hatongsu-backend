@@ -1,7 +1,7 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
-@Entity('album')
-export class AlbumEntity {
+@Entity('album_image')
+export class AlbumImageEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -10,7 +10,4 @@ export class AlbumEntity {
 
   @Column()
   dateTime: Date;
-
-  @Column()
-  userId: string;
 }

@@ -1,5 +1,6 @@
 export const SUCCESS_MESSAGES = {
   USER_REGISTRATION_SUCCESS: 'User registration successful',
+  FILE_UPLOADED_SUCCESS: 'Files are being processed',
 };
 
 export const ERROR_MESSAGES = {
