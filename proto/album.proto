@@ -3,13 +3,37 @@ syntax = "proto3";
 package album;
 
 service AlbumService {
-    rpc GetImage(ImageRequest) returns (ImageResponse);
+    rpc GetAlbumImages(AlbumImageRequest) returns (AlbumImageResponse);
 }
 
-message ImageRequest {
-    string id = 1;
+message AlbumImageProto {
+    string id = 1;                              // 이미지 ID
+    string path = 2;                            // 이미지 경로
+    optional string date_time = 3;              // 이미지 촬영 시간
+    optional string date_time_original = 4;     // 원본 촬영 시간
+    optional string date_time_digitized = 5;    // 디지털화 시간
+    string created_at = 6;                      // 생성 시간
+    string updated_at = 7;                      // 수정 시간    
 }
 
-message ImageResponse {
-    string filename = 1;    
+// message Filter {
+//     string field = 1;
+//     string value = 2;
+// }
+
+message Sort {
+    string orderBy = 1;
+    string order = 2;
+}
+
+message AlbumImageRequest {
+    //Filter filters = 1;    
+    repeated Sort sort = 2;
+    int32 page = 3; 
+    int32 limit = 4; 
+}
+
+message AlbumImageResponse {
+    repeated AlbumImageProto album_images = 1;
+    int32 total_count = 2;   
 }

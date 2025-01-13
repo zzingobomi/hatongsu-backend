@@ -8,7 +8,7 @@ import { AlbumImageDomain } from '../domain/album-image.domain';
 import { AlbumImageUploadDto } from '../dto/album-image-upload.dto';
 import { extractExifMetaData } from '../utility/exif.helper';
 import { AlbumImageStorageOutputPort } from '../port/output/album-image-storage.output-port';
-import { parseExifDateTime } from '../utility/date.helper';
+import { parseExifTime } from '../utility/date.helper';
 
 @Injectable()
 export class AlbumImageUploadUseCase {
@@ -22,13 +22,16 @@ export class AlbumImageUploadUseCase {
   async execute(data: AlbumImageUploadDto) {
     const buffer = Buffer.from(data.buffer, 'base64');
     const exifMetaData = await extractExifMetaData(buffer);
-    const dateTime = parseExifDateTime(exifMetaData.dateTime);
+    const dateTime = parseExifTime(exifMetaData.dateTime);
+    const dateTimeOriginal = parseExifTime(exifMetaData.dateTimeOriginal);
+    const dateTimeDigitized = parseExifTime(exifMetaData.dateTimeDigitized);
 
     // AlbumImage 생성
-    const albumImage = new AlbumImageDomain({
-      dateTime,
-      originFileName: data.filename,
-    });
+    const albumImage = new AlbumImageDomain();
+    albumImage.originFileName = data.filename;
+    albumImage.dateTime = dateTime;
+    albumImage.dateTimeOriginal = dateTimeOriginal;
+    albumImage.dateTimeDigitized = dateTimeDigitized;
 
     // ObjectStorage 저장
     const resultStorage =
@@ -36,12 +39,12 @@ export class AlbumImageUploadUseCase {
         albumImage,
         buffer,
       );
-    albumImage.setPath(resultStorage);
+    albumImage.path = resultStorage;
 
     // Database 저장
     const resultDatabase =
       await this.albumImageDatabaseOutputPort.saveAlbumImage(albumImage);
-    albumImage.assignId(resultDatabase.id);
+    albumImage.id = resultDatabase.id;
 
     return albumImage;
   }

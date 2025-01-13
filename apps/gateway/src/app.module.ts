@@ -5,6 +5,8 @@ import { HealthModule } from './health/health.module';
 import { VersionModule } from './version/version.module';
 import {
   ALBUM_QUEUE_SERVICE,
+  ALBUM_SERVICE,
+  AlbumMicroservice,
   USER_SERVICE,
   UserMicroservice,
 } from '@app/common';
@@ -16,6 +18,7 @@ import { UserModule } from './user/user.module';
 import { BearerTokenMiddleware } from './auth/middleware/bearer-token.middleware';
 import { FileModule } from './file/file.module';
 import { ALBUM_QUEUE } from '@app/common/const/queues';
+import { AlbumModule } from './album/album.module';
 
 @Module({
   imports: [
@@ -56,6 +59,20 @@ import { ALBUM_QUEUE } from '@app/common/const/queues';
           }),
           inject: [ConfigService],
         },
+        {
+          name: ALBUM_SERVICE,
+          useFactory: (configService: ConfigService<{ app: AppConfig }>) => ({
+            transport: Transport.GRPC,
+            options: {
+              package: AlbumMicroservice.protobufPackage,
+              protoPath: join(process.cwd(), 'proto/album.proto'),
+              url: configService.getOrThrow('app.albumGrpcUrl', {
+                infer: true,
+              }),
+            },
+          }),
+          inject: [ConfigService],
+        },
       ],
       isGlobal: true,
     }),
@@ -64,6 +81,7 @@ import { ALBUM_QUEUE } from '@app/common/const/queues';
     AuthModule,
     UserModule,
     FileModule,
+    AlbumModule,
   ],
 })
 export class AppModule implements NestModule {

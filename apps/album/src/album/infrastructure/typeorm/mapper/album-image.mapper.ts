@@ -1,17 +1,31 @@
+import { AlbumImageProto } from '@app/common/grpc/proto/album';
 import { AlbumImageEntity } from '../entity/album-image.entity';
 import { AlbumImageDomain } from 'apps/album/src/album/domain/album-image.domain';
 
 export class AlbumImageMapper {
-  constructor(private readonly album: AlbumImageEntity) {}
+  static toDomain(entity: AlbumImageEntity): AlbumImageDomain {
+    const albumDomain = new AlbumImageDomain();
 
-  toDomain() {
-    const album = new AlbumImageDomain({
-      dateTime: this.album.dateTime,
-    });
+    albumDomain.id = entity.id;
+    albumDomain.path = entity.path;
+    albumDomain.dateTime = entity.dateTime;
+    albumDomain.dateTimeOriginal = entity.dateTimeOriginal;
+    albumDomain.dateTimeDigitized = entity.dateTimeDigitized;
+    albumDomain.createdAt = entity.createdAt;
+    albumDomain.updatedAt = entity.updatedAt;
 
-    album.assignId(this.album.id);
-    album.setPath(this.album.path);
+    return albumDomain;
+  }
 
-    return album;
+  static toPersistence(domain: AlbumImageDomain): AlbumImageEntity {
+    const albumEntity = new AlbumImageEntity();
+
+    albumEntity.id = domain.id;
+    albumEntity.path = domain.path;
+    albumEntity.dateTime = domain.dateTime;
+    albumEntity.dateTimeOriginal = domain.dateTimeOriginal;
+    albumEntity.dateTimeDigitized = domain.dateTimeDigitized;
+
+    return albumEntity;
   }
 }

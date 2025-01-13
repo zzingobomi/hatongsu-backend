@@ -4,6 +4,8 @@ export interface ExifMetaData {
   make?: string;
   model?: string;
   dateTime?: string;
+  dateTimeOriginal?: string;
+  dateTimeDigitized?: string;
   gpsLatitude?: number;
   gpsLongitude?: number;
   orientation?: number;
@@ -12,12 +14,14 @@ export interface ExifMetaData {
 }
 
 export async function extractExifMetaData(buffer: Buffer) {
-  const tags = await ExifReader.load(buffer);
+  const tags = ExifReader.load(buffer);
 
   const exifMetaData: ExifMetaData = {
     make: tags?.Make?.description?.toString(),
     model: tags?.Model?.description?.toString(),
     dateTime: tags?.DateTime?.description?.toString(),
+    dateTimeOriginal: tags?.DateTimeOriginal?.description?.toString(),
+    dateTimeDigitized: tags?.DateTimeDigitized?.description?.toString(),
     width:
       convertToNumber(tags?.ImageWidth) ||
       convertToNumber(tags?.PixelXDimension),

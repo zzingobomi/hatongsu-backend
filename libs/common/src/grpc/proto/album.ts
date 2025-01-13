@@ -11,30 +11,62 @@ import { Observable } from "rxjs";
 
 export const protobufPackage = "album";
 
-export interface ImageRequest {
+export interface AlbumImageProto {
+  /** 이미지 ID */
   id: string;
+  /** 이미지 경로 */
+  path: string;
+  /** 이미지 촬영 시간 */
+  dateTime?:
+    | string
+    | undefined;
+  /** 원본 촬영 시간 */
+  dateTimeOriginal?:
+    | string
+    | undefined;
+  /** 디지털화 시간 */
+  dateTimeDigitized?:
+    | string
+    | undefined;
+  /** 생성 시간 */
+  createdAt: string;
+  /** 수정 시간 */
+  updatedAt: string;
 }
 
-export interface ImageResponse {
-  filename: string;
+export interface Sort {
+  orderBy: string;
+  order: string;
+}
+
+export interface AlbumImageRequest {
+  /** Filter filters = 1; */
+  sort: Sort[];
+  page: number;
+  limit: number;
+}
+
+export interface AlbumImageResponse {
+  albumImages: AlbumImageProto[];
+  totalCount: number;
 }
 
 export const ALBUM_PACKAGE_NAME = "album";
 
 export interface AlbumServiceClient {
-  getImage(request: ImageRequest, metadata?: Metadata): Observable<ImageResponse>;
+  getAlbumImages(request: AlbumImageRequest, metadata?: Metadata): Observable<AlbumImageResponse>;
 }
 
 export interface AlbumServiceController {
-  getImage(
-    request: ImageRequest,
+  getAlbumImages(
+    request: AlbumImageRequest,
     metadata?: Metadata,
-  ): Promise<ImageResponse> | Observable<ImageResponse> | ImageResponse;
+  ): Promise<AlbumImageResponse> | Observable<AlbumImageResponse> | AlbumImageResponse;
 }
 
 export function AlbumServiceControllerMethods() {
   return function (constructor: Function) {
-    const grpcMethods: string[] = ["getImage"];
+    const grpcMethods: string[] = ["getAlbumImages"];
     for (const method of grpcMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
       GrpcMethod("AlbumService", method)(constructor.prototype[method], method, descriptor);

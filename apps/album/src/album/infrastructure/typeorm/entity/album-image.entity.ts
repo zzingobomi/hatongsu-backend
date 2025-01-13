@@ -15,8 +15,14 @@ export class AlbumImageEntity {
   @Column()
   path: string;
 
-  @Column()
+  @Column({ nullable: true })
   dateTime: Date;
+
+  @Column({ nullable: true })
+  dateTimeOriginal: Date;
+
+  @Column({ nullable: true })
+  dateTimeDigitized: Date;
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;

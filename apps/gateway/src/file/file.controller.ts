@@ -12,7 +12,7 @@ export class FileController {
   constructor(private readonly fileService: FileService) {}
 
   @Post('uploads')
-  @UseInterceptors(FilesInterceptor('files', 10))
+  @UseInterceptors(FilesInterceptor('files', 100))
   async uploadFiles(@UploadedFiles() files: Express.Multer.File[]) {
     return this.fileService.uploadFiles(files);
   }
