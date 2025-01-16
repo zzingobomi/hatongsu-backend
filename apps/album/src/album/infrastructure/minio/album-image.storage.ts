@@ -4,7 +4,6 @@ import { AlbumImageDomain } from '../../domain/album-image.domain';
 import { ConfigService } from '@nestjs/config';
 import { AppConfig } from 'apps/album/src/config/app-config.type';
 import * as Minio from 'minio';
-import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class AlbumImageStorage implements AlbumImageStorageOutputPort {
@@ -28,17 +27,28 @@ export class AlbumImageStorage implements AlbumImageStorageOutputPort {
     });
   }
 
-  async uploadAlbumImage(
-    albumImage: AlbumImageDomain,
-    buffer: Buffer,
-  ): Promise<string> {
+  async uploadAlbumImage(albumImage: AlbumImageDomain, buffer: Buffer) {
     const bucketName = this.configService.getOrThrow('app.minio.bucketName', {
       infer: true,
     });
-    const filePath = `/${uuidv4()}_${albumImage.originFileName}`;
+    const filePath = `/${albumImage.objectKey}`;
 
-    await this.minioClient.putObject(bucketName, filePath, buffer);
+    try {
+      await this.minioClient.putObject(bucketName, filePath, buffer);
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
 
-    return `/${bucketName}${filePath}`;
+  async generatePresignedUrl(
+    bucketName: string,
+    objectKey: string,
+  ): Promise<string> {
+    return await this.minioClient.presignedGetObject(
+      bucketName,
+      objectKey,
+      60 * 60, // 1시간 유효
+    );
   }
 }

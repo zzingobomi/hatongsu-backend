@@ -1,8 +1,7 @@
 export class AlbumImageDomain {
   id: string;
-  path: string;
-
-  originFileName?: string;
+  filename: string;
+  objectKey: string;
 
   // Time info
   dateTime?: Date;

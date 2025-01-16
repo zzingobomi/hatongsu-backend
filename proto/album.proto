@@ -8,12 +8,13 @@ service AlbumService {
 
 message AlbumImageProto {
     string id = 1;                              // 이미지 ID
-    string path = 2;                            // 이미지 경로
-    optional string date_time = 3;              // 이미지 촬영 시간
-    optional string date_time_original = 4;     // 원본 촬영 시간
-    optional string date_time_digitized = 5;    // 디지털화 시간
-    string created_at = 6;                      // 생성 시간
-    string updated_at = 7;                      // 수정 시간    
+    string filename = 2;                        // 이미지 파일명
+    string path = 3;                            // 이미지 경로    
+    optional string date_time = 4;              // 이미지 촬영 시간
+    optional string date_time_original = 5;     // 원본 촬영 시간
+    optional string date_time_digitized = 6;    // 디지털화 시간
+    string created_at = 7;                      // 생성 시간
+    string updated_at = 8;                      // 수정 시간    
 }
 
 // message Filter {

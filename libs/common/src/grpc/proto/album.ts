@@ -14,6 +14,8 @@ export const protobufPackage = "album";
 export interface AlbumImageProto {
   /** 이미지 ID */
   id: string;
+  /** 이미지 파일명 */
+  filename: string;
   /** 이미지 경로 */
   path: string;
   /** 이미지 촬영 시간 */

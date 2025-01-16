@@ -9,6 +9,7 @@ import { AlbumImageUploadDto } from '../dto/album-image-upload.dto';
 import { extractExifMetaData } from '../utility/exif.helper';
 import { AlbumImageStorageOutputPort } from '../port/output/album-image-storage.output-port';
 import { parseExifTime } from '../utility/date.helper';
+import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class AlbumImageUploadUseCase {
@@ -28,23 +29,19 @@ export class AlbumImageUploadUseCase {
 
     // AlbumImage 생성
     const albumImage = new AlbumImageDomain();
-    albumImage.originFileName = data.filename;
+    albumImage.id = uuidv4();
+    albumImage.filename = data.filename;
+    albumImage.objectKey = `${albumImage.id}-${albumImage.filename}`;
     albumImage.dateTime = dateTime;
     albumImage.dateTimeOriginal = dateTimeOriginal;
     albumImage.dateTimeDigitized = dateTimeDigitized;
 
     // ObjectStorage 저장
-    const resultStorage =
-      await this.albumImageStorageOutputPort.uploadAlbumImage(
-        albumImage,
-        buffer,
-      );
-    albumImage.path = resultStorage;
+    await this.albumImageStorageOutputPort.uploadAlbumImage(albumImage, buffer);
 
     // Database 저장
     const resultDatabase =
       await this.albumImageDatabaseOutputPort.saveAlbumImage(albumImage);
-    albumImage.id = resultDatabase.id;
 
     return albumImage;
   }

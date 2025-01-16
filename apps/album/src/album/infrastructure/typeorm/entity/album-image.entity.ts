@@ -2,18 +2,21 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  PrimaryGeneratedColumn,
+  PrimaryColumn,
   UpdateDateColumn,
   VersionColumn,
 } from 'typeorm';
 
 @Entity('album_image')
 export class AlbumImageEntity {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryColumn('uuid')
   id: string;
 
   @Column()
-  path: string;
+  filename: string;
+
+  @Column()
+  objectKey: string;
 
   @Column({ nullable: true })
   dateTime: Date;

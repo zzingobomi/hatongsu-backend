@@ -7,7 +7,8 @@ export class AlbumImageMapper {
     const albumDomain = new AlbumImageDomain();
 
     albumDomain.id = entity.id;
-    albumDomain.path = entity.path;
+    albumDomain.filename = entity.filename;
+    albumDomain.objectKey = entity.objectKey;
     albumDomain.dateTime = entity.dateTime;
     albumDomain.dateTimeOriginal = entity.dateTimeOriginal;
     albumDomain.dateTimeDigitized = entity.dateTimeDigitized;
@@ -21,7 +22,8 @@ export class AlbumImageMapper {
     const albumEntity = new AlbumImageEntity();
 
     albumEntity.id = domain.id;
-    albumEntity.path = domain.path;
+    albumEntity.filename = domain.filename;
+    albumEntity.objectKey = domain.objectKey;
     albumEntity.dateTime = domain.dateTime;
     albumEntity.dateTimeOriginal = domain.dateTimeOriginal;
     albumEntity.dateTimeDigitized = domain.dateTimeDigitized;
