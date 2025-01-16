@@ -51,3 +51,14 @@ export class QueryAlbumImageDto {
   @Type(() => SortAlbumImageDto)
   sort?: SortAlbumImageDto[] | null;
 }
+
+export class QueryAlbumImageCursorDto {
+  @IsString()
+  @IsOptional()
+  cursor?: string;
+
+  @Transform(({ value }) => (value ? Number(value) : 10))
+  @IsNumber()
+  @IsOptional()
+  limit?: number;
+}

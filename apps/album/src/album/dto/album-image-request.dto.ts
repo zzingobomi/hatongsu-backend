@@ -1,6 +1,10 @@
-import { IsNumber, IsString, ValidateNested } from 'class-validator';
+import {
+  IsNumber,
+  IsOptional,
+  IsString,
+  ValidateNested,
+} from 'class-validator';
 import { Type } from 'class-transformer';
-import { AlbumImageDomain } from '../domain/album-image.domain';
 
 // export class FilterDto {
 //   @IsString()
@@ -29,6 +33,15 @@ export class AlbumImageRequestDto {
 
   @IsNumber()
   page: number;
+
+  @IsNumber()
+  limit: number;
+}
+
+export class AlbumImageCursorRequestDto {
+  @IsString()
+  @IsOptional()
+  cursor?: string;
 
   @IsNumber()
   limit: number;

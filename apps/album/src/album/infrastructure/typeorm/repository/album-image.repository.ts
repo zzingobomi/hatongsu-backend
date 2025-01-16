@@ -4,7 +4,11 @@ import { AlbumImageDatabaseOutputPort } from 'apps/album/src/album/port/output/a
 import { AlbumImageEntity } from '../entity/album-image.entity';
 import { Repository } from 'typeorm';
 import { AlbumImageMapper } from '../mapper/album-image.mapper';
-import { AlbumImageRequestDto } from '../../../dto/album-image-request.dto';
+import {
+  AlbumImageCursorRequestDto,
+  AlbumImageRequestDto,
+} from '../../../dto/album-image-request.dto';
+import * as dayjs from 'dayjs';
 
 export class AlbumImageRepository implements AlbumImageDatabaseOutputPort {
   constructor(
@@ -38,6 +42,49 @@ export class AlbumImageRepository implements AlbumImageDatabaseOutputPort {
     return [
       entities.map((entity) => AlbumImageMapper.toDomain(entity)),
       totalCount,
+    ];
+  }
+
+  async getAlbumImagesCursor(
+    query: AlbumImageCursorRequestDto,
+  ): Promise<[AlbumImageDomain[], string | null]> {
+    const queryBuilder = this.albumRepository.createQueryBuilder('albumImage');
+
+    if (query.cursor) {
+      const decodedCursor = Buffer.from(query.cursor, 'base64').toString(
+        'utf-8',
+      );
+      const [cursorDate, cursorId] = decodedCursor.split('_');
+
+      // TODO: ISO 변환이 꼭 필요한 것인가?
+      const isoCursorDate = dayjs(cursorDate).toISOString();
+
+      queryBuilder.where(
+        `(albumImage.dateTimeOriginal < :cursorDate) OR 
+         (albumImage.dateTimeOriginal = :cursorDate AND albumImage.id < :cursorId)`,
+        { cursorDate: isoCursorDate, cursorId },
+      );
+    }
+
+    queryBuilder
+      .orderBy('albumImage.dateTimeOriginal', 'DESC')
+      .addOrderBy('albumImage.id', 'DESC');
+
+    const entities = await queryBuilder.take(query.limit + 1).getMany();
+
+    let nextCursor: string | null = null;
+    if (entities.length > query.limit) {
+      const lastItem = entities[query.limit - 1];
+      nextCursor = Buffer.from(
+        `${lastItem.dateTimeOriginal}_${lastItem.id}`,
+      ).toString('base64');
+
+      entities.pop();
+    }
+
+    return [
+      entities.map((entity) => AlbumImageMapper.toDomain(entity)),
+      nextCursor,
     ];
   }
 

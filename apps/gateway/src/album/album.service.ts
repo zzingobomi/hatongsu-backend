@@ -2,7 +2,10 @@ import { ALBUM_SERVICE, AlbumMicroservice } from '@app/common';
 import { Inject, Injectable, OnModuleInit } from '@nestjs/common';
 import { ClientGrpc, ClientProxy } from '@nestjs/microservices';
 import { lastValueFrom } from 'rxjs';
-import { QueryAlbumImageDto } from './dto/query-album-image.dto';
+import {
+  QueryAlbumImageCursorDto,
+  QueryAlbumImageDto,
+} from './dto/query-album-image.dto';
 
 @Injectable()
 export class AlbumService implements OnModuleInit {
@@ -20,7 +23,6 @@ export class AlbumService implements OnModuleInit {
       );
   }
 
-  // TODO: Transform 왜 작동 안하는지 확인하기
   getAlbumImages(query: QueryAlbumImageDto) {
     const page = query?.page ?? 1;
     const limit = query?.limit ?? 10;
@@ -29,6 +31,17 @@ export class AlbumService implements OnModuleInit {
       this.albumService.getAlbumImages({
         sort: query?.sort,
         page,
+        limit,
+      }),
+    );
+  }
+
+  getAlbumImagesCursor(query: QueryAlbumImageCursorDto) {
+    const limit = query?.limit ?? 10;
+
+    return lastValueFrom(
+      this.albumService.getAlbumImagesCursor({
+        cursor: query?.cursor,
         limit,
       }),
     );

@@ -1,6 +1,9 @@
 import { Controller, Get, Query } from '@nestjs/common';
 import { AlbumService } from './album.service';
-import { QueryAlbumImageDto } from './dto/query-album-image.dto';
+import {
+  QueryAlbumImageCursorDto,
+  QueryAlbumImageDto,
+} from './dto/query-album-image.dto';
 
 @Controller('album')
 export class AlbumController {
@@ -9,5 +12,10 @@ export class AlbumController {
   @Get()
   async getAlbumImages(@Query() query: QueryAlbumImageDto) {
     return this.albumService.getAlbumImages(query);
+  }
+
+  @Get('infinite')
+  async getAlbumImagesCursor(@Query() query: QueryAlbumImageCursorDto) {
+    return this.albumService.getAlbumImagesCursor(query);
   }
 }
