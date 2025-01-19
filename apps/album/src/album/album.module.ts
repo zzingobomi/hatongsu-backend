@@ -11,6 +11,7 @@ import { AlbumImageRepository } from './infrastructure/typeorm/repository/album-
 import { AlbumImageStorage } from './infrastructure/minio/album-image.storage';
 import { GetAlbumImagesUseCase } from './usecase/get-album-images.usecase';
 import { GetAlbumImagesCursorUseCase } from './usecase/get-album-images-cursor.usecase';
+import { GetAlbumImagesInfiniteUseCase } from './usecase/get-album-images-infinite.usecase';
 
 @Module({
   imports: [TypeOrmModule.forFeature([AlbumImageEntity])],
@@ -19,6 +20,7 @@ import { GetAlbumImagesCursorUseCase } from './usecase/get-album-images-cursor.u
     AlbumImageUploadUseCase,
     GetAlbumImagesUseCase,
     GetAlbumImagesCursorUseCase,
+    GetAlbumImagesInfiniteUseCase,
     {
       provide: ALBUM_IMAGE_DATABASE_OUTPUT_PORT,
       useClass: AlbumImageRepository,

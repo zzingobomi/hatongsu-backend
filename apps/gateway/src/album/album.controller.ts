@@ -3,6 +3,7 @@ import { AlbumService } from './album.service';
 import {
   QueryAlbumImageCursorDto,
   QueryAlbumImageDto,
+  QueryAlbumImageInfiniteDto,
 } from './dto/query-album-image.dto';
 
 @Controller('album')
@@ -14,8 +15,13 @@ export class AlbumController {
     return this.albumService.getAlbumImages(query);
   }
 
-  @Get('infinite')
+  @Get('cursor')
   async getAlbumImagesCursor(@Query() query: QueryAlbumImageCursorDto) {
     return this.albumService.getAlbumImagesCursor(query);
+  }
+
+  @Get('infinite')
+  async getAlbumImagesInfinite(@Query() query: QueryAlbumImageInfiniteDto) {
+    return this.albumService.getAlbumImagesInfinite(query);
   }
 }

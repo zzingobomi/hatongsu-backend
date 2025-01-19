@@ -46,3 +46,16 @@ export class AlbumImageCursorRequestDto {
   @IsNumber()
   limit: number;
 }
+
+export class AlbumImageInfiniteRequestDto {
+  @IsString()
+  @IsOptional()
+  nextCursor?: string;
+
+  // @IsString()
+  // @IsOptional()
+  // prevCursor?: string;
+
+  @IsNumber()
+  limit: number;
+}

@@ -6,6 +6,7 @@ import { AlbumImageUploadUseCase } from '../../usecase/album-image-upload.usecas
 import { AlbumImageUploadDto } from '../../dto/album-image-upload.dto';
 import { GetAlbumImagesUseCase } from '../../usecase/get-album-images.usecase';
 import { GetAlbumImagesCursorUseCase } from '../../usecase/get-album-images-cursor.usecase';
+import { GetAlbumImagesInfiniteUseCase } from '../../usecase/get-album-images-infinite.usecase';
 
 @Controller('album')
 @AlbumMicroservice.AlbumServiceControllerMethods()
@@ -16,6 +17,7 @@ export class AlbumController
     private readonly imageUploadUseCase: AlbumImageUploadUseCase,
     private readonly getAlbumImagesUseCase: GetAlbumImagesUseCase,
     private readonly getAlbumImagesCursorUseCase: GetAlbumImagesCursorUseCase,
+    private readonly getAlbumImagesInfiniteUseCase: GetAlbumImagesInfiniteUseCase,
   ) {}
 
   @EventPattern(FILE_UPLOADED_EVENT)
@@ -36,6 +38,14 @@ export class AlbumController
     metadata?: Metadata,
   ) {
     const result = await this.getAlbumImagesCursorUseCase.execute(request);
+    return result;
+  }
+
+  async getAlbumImagesInfinite(
+    request: AlbumMicroservice.AlbumImageInfiniteRequest,
+    metadata?: Metadata,
+  ) {
+    const result = await this.getAlbumImagesInfiniteUseCase.execute(request);
     return result;
   }
 }

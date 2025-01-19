@@ -64,12 +64,31 @@ export interface AlbumImageCursorResponse {
   hasNextPage: boolean;
 }
 
+export interface AlbumImageInfiniteRequest {
+  nextCursor?:
+    | string
+    | undefined;
+  /** optional string prev_cursor = 2; */
+  limit: number;
+}
+
+export interface AlbumImageInfiniteResponse {
+  albumImages: AlbumImageProto[];
+  /** string prev_cursor = 3; */
+  nextCursor: string;
+}
+
 export const ALBUM_PACKAGE_NAME = "album";
 
 export interface AlbumServiceClient {
   getAlbumImages(request: AlbumImageRequest, metadata?: Metadata): Observable<AlbumImageResponse>;
 
   getAlbumImagesCursor(request: AlbumImageCursorRequest, metadata?: Metadata): Observable<AlbumImageCursorResponse>;
+
+  getAlbumImagesInfinite(
+    request: AlbumImageInfiniteRequest,
+    metadata?: Metadata,
+  ): Observable<AlbumImageInfiniteResponse>;
 }
 
 export interface AlbumServiceController {
@@ -82,11 +101,16 @@ export interface AlbumServiceController {
     request: AlbumImageCursorRequest,
     metadata?: Metadata,
   ): Promise<AlbumImageCursorResponse> | Observable<AlbumImageCursorResponse> | AlbumImageCursorResponse;
+
+  getAlbumImagesInfinite(
+    request: AlbumImageInfiniteRequest,
+    metadata?: Metadata,
+  ): Promise<AlbumImageInfiniteResponse> | Observable<AlbumImageInfiniteResponse> | AlbumImageInfiniteResponse;
 }
 
 export function AlbumServiceControllerMethods() {
   return function (constructor: Function) {
-    const grpcMethods: string[] = ["getAlbumImages", "getAlbumImagesCursor"];
+    const grpcMethods: string[] = ["getAlbumImages", "getAlbumImagesCursor", "getAlbumImagesInfinite"];
     for (const method of grpcMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
       GrpcMethod("AlbumService", method)(constructor.prototype[method], method, descriptor);

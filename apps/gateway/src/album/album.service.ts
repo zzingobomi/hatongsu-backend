@@ -5,6 +5,7 @@ import { lastValueFrom } from 'rxjs';
 import {
   QueryAlbumImageCursorDto,
   QueryAlbumImageDto,
+  QueryAlbumImageInfiniteDto,
 } from './dto/query-album-image.dto';
 
 @Injectable()
@@ -42,6 +43,18 @@ export class AlbumService implements OnModuleInit {
     return lastValueFrom(
       this.albumService.getAlbumImagesCursor({
         cursor: query?.cursor,
+        limit,
+      }),
+    );
+  }
+
+  getAlbumImagesInfinite(query: QueryAlbumImageInfiniteDto) {
+    const limit = query?.limit ?? 10;
+
+    return lastValueFrom(
+      this.albumService.getAlbumImagesInfinite({
+        nextCursor: query?.nextCursor,
+        //prevCursor: query?.prevCursor,
         limit,
       }),
     );

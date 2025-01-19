@@ -6,6 +6,7 @@ import { Repository } from 'typeorm';
 import { AlbumImageMapper } from '../mapper/album-image.mapper';
 import {
   AlbumImageCursorRequestDto,
+  AlbumImageInfiniteRequestDto,
   AlbumImageRequestDto,
 } from '../../../dto/album-image-request.dto';
 import * as dayjs from 'dayjs';
@@ -85,6 +86,61 @@ export class AlbumImageRepository implements AlbumImageDatabaseOutputPort {
     return [
       entities.map((entity) => AlbumImageMapper.toDomain(entity)),
       nextCursor,
+    ];
+  }
+
+  async getAlbumImagesInfinite(
+    query: AlbumImageInfiniteRequestDto,
+  ): Promise<[AlbumImageDomain[], { nextCursor: string }]> {
+    const queryBuilder = this.albumRepository.createQueryBuilder('albumImage');
+    const limit = query.limit || 10;
+
+    if (query.nextCursor) {
+      const decodedCursor = Buffer.from(query.nextCursor, 'base64').toString(
+        'utf-8',
+      );
+      const [cursorDate, cursorId] = decodedCursor.split('_');
+      const isoCursorDate = dayjs(cursorDate).toISOString();
+
+      queryBuilder.where(
+        `(albumImage.dateTimeOriginal < :cursorDate) OR 
+       (albumImage.dateTimeOriginal = :cursorDate AND albumImage.id < :cursorId)`,
+        { cursorDate: isoCursorDate, cursorId },
+      );
+    }
+
+    queryBuilder
+      .orderBy('albumImage.dateTimeOriginal', 'DESC')
+      .addOrderBy('albumImage.id', 'DESC')
+      .take(limit);
+
+    let entities = await queryBuilder.getMany();
+
+    // 데이터가 부족한 경우 처음부터 나머지 데이터를 가져옴
+    if (entities.length < limit) {
+      const remainingLimit = limit - entities.length;
+
+      const wrappingQuery = this.albumRepository
+        .createQueryBuilder('albumImage')
+        .orderBy('albumImage.dateTimeOriginal', 'DESC')
+        .addOrderBy('albumImage.id', 'DESC')
+        .take(remainingLimit);
+
+      const wrappingEntities = await wrappingQuery.getMany();
+      entities = [...entities, ...wrappingEntities];
+    }
+
+    let nextCursor = '';
+    if (entities.length > 0) {
+      const lastItem = entities[entities.length - 1];
+      nextCursor = Buffer.from(
+        `${dayjs(lastItem.dateTimeOriginal).format('YYYY-MM-DD HH:mm:ss.SSS')}_${lastItem.id}`,
+      ).toString('base64');
+    }
+
+    return [
+      entities.map((entity) => AlbumImageMapper.toDomain(entity)),
+      { nextCursor },
     ];
   }
 

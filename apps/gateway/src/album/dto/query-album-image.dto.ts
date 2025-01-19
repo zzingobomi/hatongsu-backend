@@ -62,3 +62,18 @@ export class QueryAlbumImageCursorDto {
   @IsOptional()
   limit?: number;
 }
+
+export class QueryAlbumImageInfiniteDto {
+  @IsString()
+  @IsOptional()
+  nextCursor?: string;
+
+  // @IsString()
+  // @IsOptional()
+  // prevCursor?: string;
+
+  @Transform(({ value }) => (value ? Number(value) : 10))
+  @IsNumber()
+  @IsOptional()
+  limit?: number;
+}
