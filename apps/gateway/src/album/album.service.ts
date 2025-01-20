@@ -5,6 +5,7 @@ import { lastValueFrom } from 'rxjs';
 import {
   QueryAlbumImageCursorDto,
   QueryAlbumImageDto,
+  QueryAlbumImageFerrisNextDto,
   QueryAlbumImageInfiniteDto,
 } from './dto/query-album-image.dto';
 
@@ -56,6 +57,15 @@ export class AlbumService implements OnModuleInit {
         nextCursor: query?.nextCursor,
         //prevCursor: query?.prevCursor,
         limit,
+      }),
+    );
+  }
+
+  getAlbumImageFerrisNext(query: QueryAlbumImageFerrisNextDto) {
+    return lastValueFrom(
+      this.albumService.getAlbumImageFerrisNext({
+        id: query.id,
+        skip: query.skip,
       }),
     );
   }

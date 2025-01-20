@@ -3,6 +3,7 @@ import { AlbumService } from './album.service';
 import {
   QueryAlbumImageCursorDto,
   QueryAlbumImageDto,
+  QueryAlbumImageFerrisNextDto,
   QueryAlbumImageInfiniteDto,
 } from './dto/query-album-image.dto';
 
@@ -23,5 +24,10 @@ export class AlbumController {
   @Get('infinite')
   async getAlbumImagesInfinite(@Query() query: QueryAlbumImageInfiniteDto) {
     return this.albumService.getAlbumImagesInfinite(query);
+  }
+
+  @Get('ferris-next')
+  async getAlbumImageFerrisNext(@Query() query: QueryAlbumImageFerrisNextDto) {
+    return this.albumService.getAlbumImageFerrisNext(query);
   }
 }

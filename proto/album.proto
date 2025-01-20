@@ -6,6 +6,7 @@ service AlbumService {
     rpc GetAlbumImages(AlbumImageRequest) returns (AlbumImageResponse);
     rpc GetAlbumImagesCursor(AlbumImageCursorRequest) returns (AlbumImageCursorResponse);
     rpc GetAlbumImagesInfinite(AlbumImageInfiniteRequest) returns (AlbumImageInfiniteResponse);
+    rpc GetAlbumImageFerrisNext(AlbumImageFerrisNextRequest) returns (AlbumImageFerrisNextResponse);
 }
 
 message AlbumImageProto {
@@ -62,4 +63,13 @@ message AlbumImageInfiniteResponse {
     repeated AlbumImageProto album_images = 1;
     string next_cursor = 2;
     //string prev_cursor = 3;
+}
+
+message AlbumImageFerrisNextRequest {    
+    string id = 1;
+    int32 skip = 2;
+}
+
+message AlbumImageFerrisNextResponse {
+    AlbumImageProto album_image = 1;    
 }

@@ -77,3 +77,12 @@ export class QueryAlbumImageInfiniteDto {
   @IsOptional()
   limit?: number;
 }
+
+export class QueryAlbumImageFerrisNextDto {
+  @IsString()
+  id: string;
+
+  @Transform(({ value }) => (value ? Number(value) : 10))
+  @IsNumber()
+  skip: number;
+}

@@ -6,16 +6,33 @@ import { Repository } from 'typeorm';
 import { AlbumImageMapper } from '../mapper/album-image.mapper';
 import {
   AlbumImageCursorRequestDto,
+  AlbumImageFerrisNextRequestDto,
   AlbumImageInfiniteRequestDto,
   AlbumImageRequestDto,
 } from '../../../dto/album-image-request.dto';
 import * as dayjs from 'dayjs';
+import { NotFoundException } from '@nestjs/common';
 
 export class AlbumImageRepository implements AlbumImageDatabaseOutputPort {
   constructor(
     @InjectRepository(AlbumImageEntity)
     private readonly albumRepository: Repository<AlbumImageEntity>,
   ) {}
+
+  async saveAlbumImage(album: AlbumImageDomain): Promise<AlbumImageDomain> {
+    const result = await this.albumRepository.save(album);
+
+    return AlbumImageMapper.toDomain(result);
+  }
+  async updateAlbumImage(album: AlbumImageDomain): Promise<AlbumImageDomain> {
+    await this.albumRepository.update(album.id, album);
+
+    const result = await this.albumRepository.findOne({
+      where: { id: album.id },
+    });
+
+    return AlbumImageMapper.toDomain(result);
+  }
 
   async getAlbumImages(
     query: AlbumImageRequestDto,
@@ -144,18 +161,49 @@ export class AlbumImageRepository implements AlbumImageDatabaseOutputPort {
     ];
   }
 
-  async saveAlbumImage(album: AlbumImageDomain): Promise<AlbumImageDomain> {
-    const result = await this.albumRepository.save(album);
+  async getAlbumImageFerrisNext(
+    query: AlbumImageFerrisNextRequestDto,
+  ): Promise<AlbumImageDomain> {
+    const totalCount = await this.albumRepository.count();
 
-    return AlbumImageMapper.toDomain(result);
-  }
-  async updateAlbumImage(album: AlbumImageDomain): Promise<AlbumImageDomain> {
-    await this.albumRepository.update(album.id, album);
+    if (totalCount === 0) {
+      throw new NotFoundException('No images found in the album');
+    }
 
-    const result = await this.albumRepository.findOne({
-      where: { id: album.id },
+    const currentImage = await this.albumRepository.findOne({
+      where: { id: query.id },
     });
 
-    return AlbumImageMapper.toDomain(result);
+    if (!currentImage) {
+      throw new NotFoundException(`Image with id ${query.id} not found`);
+    }
+
+    const currentIndex = await this.albumRepository
+      .createQueryBuilder('albumImage')
+      .where(
+        `(albumImage.dateTimeOriginal > :dateTimeOriginal) OR 
+       (albumImage.dateTimeOriginal = :dateTimeOriginal AND albumImage.id > :id)`,
+        {
+          dateTimeOriginal: currentImage.dateTimeOriginal,
+          id: currentImage.id,
+        },
+      )
+      .getCount();
+
+    const nextIndex = (currentIndex + query.skip) % totalCount;
+
+    const nextImage = await this.albumRepository
+      .createQueryBuilder('albumImage')
+      .orderBy('albumImage.dateTimeOriginal', 'DESC')
+      .addOrderBy('albumImage.id', 'DESC')
+      .skip(nextIndex)
+      .take(1)
+      .getOne();
+
+    if (!nextImage) {
+      throw new NotFoundException('Failed to fetch next image');
+    }
+
+    return AlbumImageMapper.toDomain(nextImage);
   }
 }

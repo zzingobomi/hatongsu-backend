@@ -59,3 +59,11 @@ export class AlbumImageInfiniteRequestDto {
   @IsNumber()
   limit: number;
 }
+
+export class AlbumImageFerrisNextRequestDto {
+  @IsString()
+  id: string;
+
+  @IsNumber()
+  skip: number;
+}
