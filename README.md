@@ -53,5 +53,4 @@ graph TD
 
 ##### TODO
 
-- datetime, dateimeOriginal? 둘중에 뭘 선택해야 하는지 확인해보기
 - cursor 에서 ISO 변환이 꼭 필요한 것인가?

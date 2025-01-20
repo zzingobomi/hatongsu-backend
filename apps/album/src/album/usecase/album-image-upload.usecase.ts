@@ -27,13 +27,16 @@ export class AlbumImageUploadUseCase {
     const dateTimeOriginal = parseExifTime(exifMetaData.dateTimeOriginal);
     const dateTimeDigitized = parseExifTime(exifMetaData.dateTimeDigitized);
 
+    // fallback 순서: dateTimeOriginal -> dateTime -> dateTimeDigitized
+    const resolvedDateTime = dateTimeOriginal || dateTime || dateTimeDigitized;
+
     // AlbumImage 생성
     const albumImage = new AlbumImageDomain();
     albumImage.id = uuidv4();
     albumImage.filename = data.filename;
     albumImage.objectKey = `${albumImage.id}-${albumImage.filename}`;
     albumImage.dateTime = dateTime;
-    albumImage.dateTimeOriginal = dateTimeOriginal;
+    albumImage.dateTimeOriginal = resolvedDateTime;
     albumImage.dateTimeDigitized = dateTimeDigitized;
 
     // ObjectStorage 저장
