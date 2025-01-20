@@ -3,6 +3,7 @@ import { UserPayloadDto } from '@app/common/dto';
 import { Inject, Injectable, OnModuleInit } from '@nestjs/common';
 import { ClientGrpc, ClientProxy } from '@nestjs/microservices';
 import { lastValueFrom } from 'rxjs';
+import { QueryUserDto } from './dto/query-user.dto';
 
 @Injectable()
 export class UserService implements OnModuleInit {
@@ -23,6 +24,17 @@ export class UserService implements OnModuleInit {
   getUserInfo(userPayload: UserPayloadDto) {
     return lastValueFrom(
       this.userService.getUserInfo({ userId: userPayload.sub }),
+    );
+  }
+
+  getUsers(dto: QueryUserDto) {
+    return lastValueFrom(
+      this.userService.getUsers({
+        page: dto.page,
+        limit: dto.limit,
+        filter: dto.filter,
+        sort: dto.sort,
+      }),
     );
   }
 }

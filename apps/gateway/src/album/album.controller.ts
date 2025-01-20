@@ -1,4 +1,4 @@
-import { Controller, Get, Query } from '@nestjs/common';
+import { Controller, Get, Query, UseGuards } from '@nestjs/common';
 import { AlbumService } from './album.service';
 import {
   QueryAlbumImageCursorDto,
@@ -6,12 +6,14 @@ import {
   QueryAlbumImageFerrisNextDto,
   QueryAlbumImageInfiniteDto,
 } from './dto/query-album-image.dto';
+import { TokenGuard } from '../auth/guard/token.huard';
 
 @Controller('album')
 export class AlbumController {
   constructor(private readonly albumService: AlbumService) {}
 
   @Get()
+  @UseGuards(TokenGuard)
   async getAlbumImages(@Query() query: QueryAlbumImageDto) {
     return this.albumService.getAlbumImages(query);
   }

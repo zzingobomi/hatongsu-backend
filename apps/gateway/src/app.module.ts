@@ -86,6 +86,6 @@ import { AlbumModule } from './album/album.module';
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(BearerTokenMiddleware).forRoutes('user');
+    consumer.apply(BearerTokenMiddleware).forRoutes('album', 'user');
   }
 }

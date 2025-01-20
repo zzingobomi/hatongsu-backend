@@ -1,9 +1,10 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entity/user.entity';
-import { Repository } from 'typeorm';
+import { FindOptionsWhere, ILike, Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { ERROR_MESSAGES } from '@app/common';
+import { QueryUserDto } from './dto/query-user.dto';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
@@ -20,7 +21,41 @@ export class UserService {
       throw new BadRequestException(ERROR_MESSAGES.USER_NOT_FOUND);
     }
 
-    return user;
+    return { user };
+  }
+
+  async getUsers(dto: QueryUserDto) {
+    const { page = 1, limit = 10, filter, sort } = dto;
+
+    const where: FindOptionsWhere<User> = {};
+    if (filter?.field && filter?.value) {
+      switch (filter.field) {
+        case 'email':
+        case 'nickname':
+          where[filter.field] = ILike(`%${filter.value}%`);
+          break;
+        default:
+          where[filter.field] = filter.value;
+      }
+    }
+
+    const [users, totalCount] = await this.userRepository.findAndCount({
+      skip: (page - 1) * limit,
+      take: limit,
+      where,
+      order: sort?.reduce(
+        (accumulator, sort) => ({
+          ...accumulator,
+          [sort.orderBy]: sort.order,
+        }),
+        {},
+      ),
+    });
+
+    return {
+      users,
+      totalCount,
+    };
   }
 
   async create(createUserDto: CreateUserDto) {

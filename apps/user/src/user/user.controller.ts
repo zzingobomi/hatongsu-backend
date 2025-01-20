@@ -10,4 +10,13 @@ export class UserController implements UserMicroservice.UserServiceController {
   getUserInfo(request: UserMicroservice.GetUserInfoRequest) {
     return this.userService.getUserById(request.userId);
   }
+
+  getUsers(request: UserMicroservice.GetUsersRequest) {
+    return this.userService.getUsers({
+      page: request.page,
+      limit: request.limit,
+      filter: request.filter,
+      sort: request.sort,
+    });
+  }
 }
