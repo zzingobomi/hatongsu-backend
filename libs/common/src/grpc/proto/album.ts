@@ -87,6 +87,20 @@ export interface AlbumImageFerrisNextResponse {
   albumImage: AlbumImageProto | undefined;
 }
 
+export interface AlbumImageCountDateRequest {
+  startDate: string;
+  endDate: string;
+}
+
+export interface CountDateResponse {
+  date: string;
+  count: number;
+}
+
+export interface AlbumImageCountDateResponse {
+  result: CountDateResponse[];
+}
+
 export const ALBUM_PACKAGE_NAME = "album";
 
 export interface AlbumServiceClient {
@@ -103,6 +117,11 @@ export interface AlbumServiceClient {
     request: AlbumImageFerrisNextRequest,
     metadata?: Metadata,
   ): Observable<AlbumImageFerrisNextResponse>;
+
+  getAlbumImageCountDate(
+    request: AlbumImageCountDateRequest,
+    metadata?: Metadata,
+  ): Observable<AlbumImageCountDateResponse>;
 }
 
 export interface AlbumServiceController {
@@ -125,6 +144,11 @@ export interface AlbumServiceController {
     request: AlbumImageFerrisNextRequest,
     metadata?: Metadata,
   ): Promise<AlbumImageFerrisNextResponse> | Observable<AlbumImageFerrisNextResponse> | AlbumImageFerrisNextResponse;
+
+  getAlbumImageCountDate(
+    request: AlbumImageCountDateRequest,
+    metadata?: Metadata,
+  ): Promise<AlbumImageCountDateResponse> | Observable<AlbumImageCountDateResponse> | AlbumImageCountDateResponse;
 }
 
 export function AlbumServiceControllerMethods() {
@@ -134,6 +158,7 @@ export function AlbumServiceControllerMethods() {
       "getAlbumImagesCursor",
       "getAlbumImagesInfinite",
       "getAlbumImageFerrisNext",
+      "getAlbumImageCountDate",
     ];
     for (const method of grpcMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);

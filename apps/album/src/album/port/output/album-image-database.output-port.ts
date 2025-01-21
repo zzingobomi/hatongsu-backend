@@ -1,4 +1,5 @@
 import { AlbumImageDomain } from '../../domain/album-image.domain';
+import { AlbumImageCountDateDto } from '../../dto/album-image-count-date.dto';
 import {
   AlbumImageCursorRequestDto,
   AlbumImageFerrisNextRequestDto,
@@ -19,6 +20,9 @@ export interface AlbumImageDatabaseOutputPort {
   getAlbumImageFerrisNext(
     query: AlbumImageFerrisNextRequestDto,
   ): Promise<AlbumImageDomain>;
+  getAlbumImageCountDate(
+    query: AlbumImageCountDateDto,
+  ): Promise<{ date: string; count: number }[]>;
   saveAlbumImage(albumImage: AlbumImageDomain): Promise<AlbumImageDomain>;
   updateAlbumImage(albumImage: AlbumImageDomain): Promise<AlbumImageDomain>;
 }

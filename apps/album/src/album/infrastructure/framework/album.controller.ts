@@ -8,6 +8,7 @@ import { GetAlbumImagesUseCase } from '../../usecase/get-album-images.usecase';
 import { GetAlbumImagesCursorUseCase } from '../../usecase/get-album-images-cursor.usecase';
 import { GetAlbumImagesInfiniteUseCase } from '../../usecase/get-album-images-infinite.usecase';
 import { GetAlbumImageFerrisNextUseCase } from '../../usecase/get-album-image-ferris-next.usecase';
+import { GetAlbumImageCountDateUseCase } from '../../usecase/get-album-image-count-date.usecase';
 
 @Controller('album')
 @AlbumMicroservice.AlbumServiceControllerMethods()
@@ -20,6 +21,7 @@ export class AlbumController
     private readonly getAlbumImagesCursorUseCase: GetAlbumImagesCursorUseCase,
     private readonly getAlbumImagesInfiniteUseCase: GetAlbumImagesInfiniteUseCase,
     private readonly getAlbumImageFerrisNextUseCase: GetAlbumImageFerrisNextUseCase,
+    private readonly getAlbumImageCountDateUseCase: GetAlbumImageCountDateUseCase,
   ) {}
 
   @EventPattern(FILE_UPLOADED_EVENT)
@@ -56,6 +58,14 @@ export class AlbumController
     metadata?: Metadata,
   ) {
     const result = await this.getAlbumImageFerrisNextUseCase.execute(request);
+    return result;
+  }
+
+  async getAlbumImageCountDate(
+    request: AlbumMicroservice.AlbumImageCountDateRequest,
+    metadata?: Metadata,
+  ) {
+    const result = await this.getAlbumImageCountDateUseCase.execute(request);
     return result;
   }
 }

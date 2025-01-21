@@ -7,6 +7,7 @@ import {
   QueryAlbumImageInfiniteDto,
 } from './dto/query-album-image.dto';
 import { TokenGuard } from '../auth/guard/token.huard';
+import { AlbumImageCountDateDto } from './dto/album-image-count-date.dto';
 
 @Controller('album')
 export class AlbumController {
@@ -31,5 +32,10 @@ export class AlbumController {
   @Get('ferris-next')
   async getAlbumImageFerrisNext(@Query() query: QueryAlbumImageFerrisNextDto) {
     return this.albumService.getAlbumImageFerrisNext(query);
+  }
+
+  @Get('statistic/count-date')
+  async getImageCountDate(@Query() query: AlbumImageCountDateDto) {
+    return this.albumService.getImageCountDate(query);
   }
 }

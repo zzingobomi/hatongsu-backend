@@ -8,6 +8,7 @@ import {
   QueryAlbumImageFerrisNextDto,
   QueryAlbumImageInfiniteDto,
 } from './dto/query-album-image.dto';
+import { AlbumImageCountDateDto } from './dto/album-image-count-date.dto';
 
 @Injectable()
 export class AlbumService implements OnModuleInit {
@@ -66,6 +67,15 @@ export class AlbumService implements OnModuleInit {
       this.albumService.getAlbumImageFerrisNext({
         id: query.id,
         skip: query.skip,
+      }),
+    );
+  }
+
+  getImageCountDate(query: AlbumImageCountDateDto) {
+    return lastValueFrom(
+      this.albumService.getAlbumImageCountDate({
+        startDate: query.startDate,
+        endDate: query.endDate,
       }),
     );
   }

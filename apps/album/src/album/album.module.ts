@@ -1,4 +1,4 @@
-import { Get, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AlbumImageEntity } from './infrastructure/typeorm/entity/album-image.entity';
 import { AlbumController } from './infrastructure/framework/album.controller';
@@ -13,6 +13,7 @@ import { GetAlbumImagesUseCase } from './usecase/get-album-images.usecase';
 import { GetAlbumImagesCursorUseCase } from './usecase/get-album-images-cursor.usecase';
 import { GetAlbumImagesInfiniteUseCase } from './usecase/get-album-images-infinite.usecase';
 import { GetAlbumImageFerrisNextUseCase } from './usecase/get-album-image-ferris-next.usecase';
+import { GetAlbumImageCountDateUseCase } from './usecase/get-album-image-count-date.usecase';
 
 @Module({
   imports: [TypeOrmModule.forFeature([AlbumImageEntity])],
@@ -23,6 +24,7 @@ import { GetAlbumImageFerrisNextUseCase } from './usecase/get-album-image-ferris
     GetAlbumImagesCursorUseCase,
     GetAlbumImagesInfiniteUseCase,
     GetAlbumImageFerrisNextUseCase,
+    GetAlbumImageCountDateUseCase,
     {
       provide: ALBUM_IMAGE_DATABASE_OUTPUT_PORT,
       useClass: AlbumImageRepository,

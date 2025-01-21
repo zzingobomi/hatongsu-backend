@@ -12,6 +12,7 @@ import {
 } from '../../../dto/album-image-request.dto';
 import * as dayjs from 'dayjs';
 import { NotFoundException } from '@nestjs/common';
+import { AlbumImageCountDateDto } from '../../../dto/album-image-count-date.dto';
 
 export class AlbumImageRepository implements AlbumImageDatabaseOutputPort {
   constructor(
@@ -205,5 +206,29 @@ export class AlbumImageRepository implements AlbumImageDatabaseOutputPort {
     }
 
     return AlbumImageMapper.toDomain(nextImage);
+  }
+
+  async getAlbumImageCountDate(
+    dto: AlbumImageCountDateDto,
+  ): Promise<{ date: string; count: number }[]> {
+    const queryBuilder = this.albumRepository
+      .createQueryBuilder('albumImage')
+      .select('DATE(albumImage.dateTimeOriginal)', 'date')
+      .addSelect('COUNT(*)', 'count')
+      .where('DATE(albumImage.dateTimeOriginal) >= :startDate', {
+        startDate: dto.startDate,
+      })
+      .andWhere('DATE(albumImage.dateTimeOriginal) <= :endDate', {
+        endDate: dto.endDate,
+      })
+      .groupBy('DATE(albumImage.dateTimeOriginal)')
+      .orderBy('date', 'ASC');
+
+    const results = await queryBuilder.getRawMany();
+
+    return results.map((result) => ({
+      date: dayjs(result.date).format('YYYY-MM-DD'),
+      count: parseInt(result.count),
+    }));
   }
 }

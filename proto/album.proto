@@ -7,6 +7,7 @@ service AlbumService {
     rpc GetAlbumImagesCursor(AlbumImageCursorRequest) returns (AlbumImageCursorResponse);
     rpc GetAlbumImagesInfinite(AlbumImageInfiniteRequest) returns (AlbumImageInfiniteResponse);
     rpc GetAlbumImageFerrisNext(AlbumImageFerrisNextRequest) returns (AlbumImageFerrisNextResponse);
+    rpc GetAlbumImageCountDate(AlbumImageCountDateRequest) returns (AlbumImageCountDateResponse);
 }
 
 message AlbumImageProto {
@@ -72,4 +73,18 @@ message AlbumImageFerrisNextRequest {
 
 message AlbumImageFerrisNextResponse {
     AlbumImageProto album_image = 1;    
+}
+
+message AlbumImageCountDateRequest {
+    string startDate = 1;
+    string endDate = 2;
+}
+
+message CountDateResponse {
+    string date = 1;
+    int32 count = 2;
+}
+
+message AlbumImageCountDateResponse {
+    repeated CountDateResponse result = 1;    
 }
