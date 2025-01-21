@@ -38,6 +38,26 @@ export interface ParseBearerTokenResponse {
   sub: string;
 }
 
+export interface ValidateGoogleTokenRequest {
+  idToken: string;
+}
+
+export interface ValidateGoogleTokenResponse {
+  success: boolean;
+  message: string;
+}
+
+export interface LoginGoogleRequest {
+  email: string;
+  nickname: string;
+  profile: string;
+}
+
+export interface LoginGoogleResponse {
+  accessToken: string;
+  refreshToken: string;
+}
+
 export interface UserProto {
   id: string;
   email: string;
@@ -84,6 +104,13 @@ export interface AuthServiceClient {
   loginUser(request: LoginUserRequest, metadata?: Metadata): Observable<LoginUserResponse>;
 
   parseBearerToken(request: ParseBearerTokenRequest, metadata?: Metadata): Observable<ParseBearerTokenResponse>;
+
+  validateGoogleToken(
+    request: ValidateGoogleTokenRequest,
+    metadata?: Metadata,
+  ): Observable<ValidateGoogleTokenResponse>;
+
+  loginGoogle(request: LoginGoogleRequest, metadata?: Metadata): Observable<LoginGoogleResponse>;
 }
 
 export interface AuthServiceController {
@@ -101,11 +128,27 @@ export interface AuthServiceController {
     request: ParseBearerTokenRequest,
     metadata?: Metadata,
   ): Promise<ParseBearerTokenResponse> | Observable<ParseBearerTokenResponse> | ParseBearerTokenResponse;
+
+  validateGoogleToken(
+    request: ValidateGoogleTokenRequest,
+    metadata?: Metadata,
+  ): Promise<ValidateGoogleTokenResponse> | Observable<ValidateGoogleTokenResponse> | ValidateGoogleTokenResponse;
+
+  loginGoogle(
+    request: LoginGoogleRequest,
+    metadata?: Metadata,
+  ): Promise<LoginGoogleResponse> | Observable<LoginGoogleResponse> | LoginGoogleResponse;
 }
 
 export function AuthServiceControllerMethods() {
   return function (constructor: Function) {
-    const grpcMethods: string[] = ["registerUser", "loginUser", "parseBearerToken"];
+    const grpcMethods: string[] = [
+      "registerUser",
+      "loginUser",
+      "parseBearerToken",
+      "validateGoogleToken",
+      "loginGoogle",
+    ];
     for (const method of grpcMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
       GrpcMethod("AuthService", method)(constructor.prototype[method], method, descriptor);

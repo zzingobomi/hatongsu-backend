@@ -1,6 +1,8 @@
 import {
   BadRequestException,
+  ConflictException,
   Injectable,
+  InternalServerErrorException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { UserService } from '../user/user.service';
@@ -12,7 +14,10 @@ import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { ERROR_MESSAGES, SUCCESS_MESSAGES } from '@app/common';
 import { AppConfig } from '../config/app-config.type';
+import { OAuth2Client } from 'google-auth-library';
 import * as bcrypt from 'bcrypt';
+import { GoogleLoginDto } from './dto/google-login.dto';
+import { UserProvider } from '../user/const/user.provider';
 
 export enum TokenType {
   BASIC = 'basic',
@@ -26,13 +31,20 @@ export enum AuthTokenType {
 
 @Injectable()
 export class AuthService {
+  private google: OAuth2Client;
+
   constructor(
     private configService: ConfigService<{ app: AppConfig }>,
     private readonly userService: UserService,
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
     private readonly jwtService: JwtService,
-  ) {}
+  ) {
+    this.google = new OAuth2Client(
+      configService.get('app.google.clientId', { infer: true }),
+      configService.get('app.google.clientSecret', { infer: true }),
+    );
+  }
 
   async register(rawToken: string, registerDto: RegisterDto) {
     try {
@@ -42,6 +54,7 @@ export class AuthService {
         ...registerDto,
         email,
         password,
+        provider: UserProvider.CREDENTIALS,
       });
 
       return {
@@ -183,5 +196,82 @@ export class AuthService {
         }),
       },
     );
+  }
+
+  async validateGoogleToken(idToken: string) {
+    try {
+      const ticket = await this.google.verifyIdToken({
+        idToken,
+        audience: this.configService.get('app.google.clientId', {
+          infer: true,
+        }),
+      });
+
+      const payload = ticket.getPayload();
+
+      if (!payload) {
+        throw new UnauthorizedException(ERROR_MESSAGES.INVALID_GOOGLE_TOKEN);
+      }
+
+      if (!payload.email_verified) {
+        throw new UnauthorizedException(ERROR_MESSAGES.EMAIL_NOT_VERIFIED);
+      }
+
+      return {
+        success: true,
+        message: SUCCESS_MESSAGES.VALIDATE_GOOGLE_TOKEN_SUCCESS,
+      };
+    } catch (error) {
+      if (error instanceof UnauthorizedException) {
+        throw error;
+      }
+
+      console.error('Google token validation error:', error);
+      throw new UnauthorizedException(ERROR_MESSAGES.INVALID_GOOGLE_TOKEN);
+    }
+  }
+
+  async loginGoogle(loginDto: GoogleLoginDto) {
+    try {
+      // 1. 먼저 이메일로 모든 프로바이더의 계정 확인
+      const { user: existingUser } = await this.userService.getUserByEmail(
+        loginDto.email,
+      );
+
+      // 2. 이메일은 있지만 다른 프로바이더로 가입한 경우
+      if (existingUser && existingUser.provider !== UserProvider.GOOGLE) {
+        throw new ConflictException(
+          `This email is already registered with ${existingUser.provider}. Please use that login method.`,
+        );
+      }
+
+      // 3. Google 계정으로 이미 가입한 경우 -> 로그인 처리
+      if (existingUser && existingUser.provider === UserProvider.GOOGLE) {
+        return {
+          accessToken: await this.issueToken(existingUser, false),
+          refreshToken: await this.issueToken(existingUser, true),
+        };
+      }
+
+      // 4. 새 계정 생성 (Google 프로바이더로 최초 가입)
+      const newUser = await this.userService.create({
+        email: loginDto.email,
+        nickname: loginDto.nickname,
+        password: 'google',
+        profile: loginDto.profile,
+        provider: UserProvider.GOOGLE,
+      });
+
+      return {
+        accessToken: await this.issueToken(newUser, false),
+        refreshToken: await this.issueToken(newUser, true),
+      };
+    } catch (error) {
+      if (error instanceof ConflictException) {
+        throw error;
+      }
+      console.error(`Google login failed: ${error.message}`, error.stack);
+      throw new InternalServerErrorException('Failed to process Google login');
+    }
   }
 }

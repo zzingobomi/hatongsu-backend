@@ -7,6 +7,7 @@ import {
   VersionColumn,
 } from 'typeorm';
 import { UserRole } from '../const/user.role';
+import { UserProvider } from '../const/user.provider';
 
 @Entity()
 export class User {
@@ -35,6 +36,12 @@ export class User {
     default: UserRole.USER,
   })
   role: UserRole;
+
+  @Column({
+    type: 'enum',
+    enum: UserProvider,
+  })
+  provider: UserProvider;
 
   @CreateDateColumn()
   createdAt: Date;

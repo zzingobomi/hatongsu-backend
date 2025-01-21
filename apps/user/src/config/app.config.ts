@@ -23,6 +23,12 @@ class EnvironmentVariablesValidator {
 
   @IsString()
   TOKEN_EXPIRE_TIME: string;
+
+  @IsString()
+  GOOGLE_CLIENT_ID: string;
+
+  @IsString()
+  GOOGLE_CLIENT_SECRET: string;
 }
 
 export default registerAs<AppConfig>('app', () => {
@@ -35,5 +41,9 @@ export default registerAs<AppConfig>('app', () => {
     accessTokenSecret: process.env.ACCESS_TOKEN_SECRET,
     refreshTokenSecret: process.env.REFRESH_TOKEN_SECRET,
     tokenExpireTime: process.env.TOKEN_EXPIRE_TIME,
+    google: {
+      clientId: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    },
   };
 });

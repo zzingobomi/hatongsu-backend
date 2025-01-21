@@ -1,4 +1,11 @@
-import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
+import {
+  IsEmail,
+  IsEnum,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+} from 'class-validator';
+import { UserProvider } from '../const/user.provider';
 
 export class CreateUserDto {
   @IsEmail()
@@ -12,4 +19,11 @@ export class CreateUserDto {
   @IsString()
   @IsNotEmpty()
   nickname: string;
+
+  @IsString()
+  @IsOptional()
+  profile?: string;
+
+  @IsEnum(UserProvider)
+  provider: UserProvider;
 }

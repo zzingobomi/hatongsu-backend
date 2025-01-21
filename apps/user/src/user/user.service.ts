@@ -5,6 +5,7 @@ import { FindOptionsWhere, ILike, Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { ERROR_MESSAGES } from '@app/common';
 import { QueryUserDto } from './dto/query-user.dto';
+import { UserProvider } from './const/user.provider';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
@@ -16,6 +17,16 @@ export class UserService {
 
   async getUserById(userId: string) {
     const user = await this.userRepository.findOneBy({ id: userId });
+
+    if (!user) {
+      throw new BadRequestException(ERROR_MESSAGES.USER_NOT_FOUND);
+    }
+
+    return { user };
+  }
+
+  async getUserByEmail(email: string) {
+    const user = await this.userRepository.findOneBy({ email });
 
     if (!user) {
       throw new BadRequestException(ERROR_MESSAGES.USER_NOT_FOUND);

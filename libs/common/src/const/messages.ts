@@ -1,6 +1,7 @@
 export const SUCCESS_MESSAGES = {
   USER_REGISTRATION_SUCCESS: 'User registration successful',
   FILE_UPLOADED_SUCCESS: 'Files are being processed',
+  VALIDATE_GOOGLE_TOKEN_SUCCESS: 'Google token is valid',
 };
 
 export const ERROR_MESSAGES = {
@@ -20,6 +21,8 @@ export const ERROR_MESSAGES = {
   INVALID_ACCESS_TOKEN: 'It is not an Access token',
   TOKEN_EXPIRED: 'Token has expired!',
   TOKEN_GUARD_MISSING: 'TokenGuard is missing!',
+  INVALID_GOOGLE_TOKEN: 'Google token is invalid',
+  EMAIL_NOT_VERIFIED: 'Email is not verified',
 
   // User 관련 오류 메시지
   USER_NOT_FOUND: 'User does not exist!',

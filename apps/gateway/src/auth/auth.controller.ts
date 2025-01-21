@@ -9,6 +9,7 @@ import { AuthService } from './auth.service';
 import { Authorization } from './decorator/authorization.decorator';
 import { ERROR_MESSAGES } from '@app/common/const/messages';
 import { RegisterDto } from './dto/register.dto';
+import { GoogleLoginDto } from './dto/google-login.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -34,5 +35,10 @@ export class AuthController {
     }
 
     return this.authService.login(credentials);
+  }
+
+  @Post('google/login')
+  loginGoogle(@Body() loginDto: GoogleLoginDto) {
+    return this.authService.loginGoogle(loginDto);
   }
 }

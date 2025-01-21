@@ -6,6 +6,8 @@ service AuthService {
     rpc RegisterUser(RegisterUserRequest) returns (RegisterUserResponse);
     rpc LoginUser(LoginUserRequest) returns (LoginUserResponse);
     rpc ParseBearerToken(ParseBearerTokenRequest) returns (ParseBearerTokenResponse);
+    rpc ValidateGoogleToken(ValidateGoogleTokenRequest) returns (ValidateGoogleTokenResponse);
+    rpc LoginGoogle(LoginGoogleRequest) returns (LoginGoogleResponse);
 }
 
 message RegisterUserRequest {
@@ -33,6 +35,26 @@ message ParseBearerTokenRequest {
 
 message ParseBearerTokenResponse {
     string sub = 1;
+}
+
+message ValidateGoogleTokenRequest {
+    string idToken = 1;
+}
+
+message ValidateGoogleTokenResponse {
+    bool success = 1;
+    string message = 2;
+}
+
+message LoginGoogleRequest {
+    string email = 1;
+    string nickname = 2;
+    string profile = 3;
+}
+
+message LoginGoogleResponse {
+    string accessToken = 1;
+    string refreshToken = 2;
 }
 
 service UserService {

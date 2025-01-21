@@ -5,4 +5,8 @@ export type AppConfig = {
   accessTokenSecret: string;
   refreshTokenSecret: string;
   tokenExpireTime: string;
+  google: {
+    clientId: string;
+    clientSecret: string;
+  };
 };
