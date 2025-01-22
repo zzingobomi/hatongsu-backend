@@ -234,9 +234,15 @@ export class AuthService {
   async loginGoogle(loginDto: GoogleLoginDto) {
     try {
       // 1. 먼저 이메일로 모든 프로바이더의 계정 확인
-      const { user: existingUser } = await this.userService.getUserByEmail(
-        loginDto.email,
-      );
+      let existingUser = null;
+      try {
+        const { user } = await this.userService.getUserByEmail(loginDto.email);
+        existingUser = user;
+      } catch (error) {
+        if (!(error instanceof BadRequestException)) {
+          throw error;
+        }
+      }
 
       // 2. 이메일은 있지만 다른 프로바이더로 가입한 경우
       if (existingUser && existingUser.provider !== UserProvider.GOOGLE) {

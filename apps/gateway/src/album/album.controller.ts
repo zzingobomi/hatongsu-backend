@@ -29,6 +29,11 @@ export class AlbumController {
     return this.albumService.getAlbumImagesInfinite(query);
   }
 
+  @Get('ferris-first')
+  async getAlbumImagesFerrisFirst(@Query() query: QueryAlbumImageDto) {
+    return this.albumService.getAlbumImages(query);
+  }
+
   @Get('ferris-next')
   async getAlbumImageFerrisNext(@Query() query: QueryAlbumImageFerrisNextDto) {
     return this.albumService.getAlbumImageFerrisNext(query);
