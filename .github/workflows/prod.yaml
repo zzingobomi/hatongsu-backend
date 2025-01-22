@@ -1,0 +1,58 @@
+name: Hatongsu CI/CD
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      album: ${{ steps.filter.outputs.album }}
+      gateway: ${{ steps.filter.outputs.gateway }}
+      user: ${{ steps.filter.outputs.user }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            album:
+              - 'apps/album/**'
+              - 'proto/**'
+              - 'libs/**'
+            gateway:
+              - 'apps/gateway/**'
+              - 'proto/**'
+              - 'libs/**'
+            user:
+              - 'apps/user/**'
+              - 'proto/**'
+              - 'libs/**'
+
+  build-album:
+    needs: changes
+    if: ${{ needs.changes.outputs.album == 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Debug Album Build Trigger
+        run: |
+          echo "Starting Album build process"
+
+  build-gateway:
+    needs: changes
+    if: ${{ needs.changes.outputs.gateway == 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Debug Gateway Build Trigger
+        run: |
+          echo "Starting Gateway build process"
+
+  build-user:
+    needs: changes
+    if: ${{ needs.changes.outputs.user == 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Debug User Build Trigger
+        run: |
+          echo "Starting User build process"
