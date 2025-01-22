@@ -17,18 +17,33 @@ jobs:
         id: filter
         with:
           filters: |
-            album:
+            album:              
               - 'apps/album/**'
               - 'proto/**'
               - 'libs/**'
+              - '.eslintrc.js'
+              - 'nest-cli.json'
+              - 'package.json'
+              - 'tsconfig.json'
+              - 'tsconfig.build.json'
             gateway:
               - 'apps/gateway/**'
               - 'proto/**'
               - 'libs/**'
+              - '.eslintrc.js'
+              - 'nest-cli.json'
+              - 'package.json'
+              - 'tsconfig.json'
+              - 'tsconfig.build.json'
             user:
               - 'apps/user/**'
               - 'proto/**'
               - 'libs/**'
+              - '.eslintrc.js'
+              - 'nest-cli.json'
+              - 'package.json'
+              - 'tsconfig.json'
+              - 'tsconfig.build.json'
 
   build-album:
     needs: changes

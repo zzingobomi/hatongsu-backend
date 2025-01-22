@@ -24,6 +24,8 @@ async function deepResolvePromises(input) {
     return resolvedObject;
   }
 
+  console.log('test');
+
   return input;
 }
 

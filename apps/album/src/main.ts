@@ -35,8 +35,6 @@ async function bootstrap() {
     },
   });
 
-  console.log('test');
-
   await app.init();
   await app.startAllMicroservices();
 }
