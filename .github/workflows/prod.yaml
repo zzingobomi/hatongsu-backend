@@ -2,7 +2,7 @@ name: Hatongsu CI/CD
 
 on:
   push:
-    branches: [main]
+    branches: [prod]
 
 jobs:
   changes:
@@ -24,6 +24,7 @@ jobs:
               - '.eslintrc.js'
               - 'nest-cli.json'
               - 'package.json'
+              - 'pnpm-lock.yaml'
               - 'tsconfig.json'
               - 'tsconfig.build.json'
             gateway:
@@ -33,6 +34,7 @@ jobs:
               - '.eslintrc.js'
               - 'nest-cli.json'
               - 'package.json'
+              - 'pnpm-lock.yaml'
               - 'tsconfig.json'
               - 'tsconfig.build.json'
             user:
@@ -42,6 +44,7 @@ jobs:
               - '.eslintrc.js'
               - 'nest-cli.json'
               - 'package.json'
+              - 'pnpm-lock.yaml'
               - 'tsconfig.json'
               - 'tsconfig.build.json'
 
@@ -50,24 +53,69 @@ jobs:
     if: ${{ needs.changes.outputs.album == 'true' }}
     runs-on: ubuntu-latest
     steps:
-      - name: Debug Album Build Trigger
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Login to Dockerhub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Set Timestamp
+        run: echo "TIMESTAMP=$(date -u +"%Y-%m-%dT%H-%M-%S")" >> $GITHUB_ENV
+
+      - name: Build and Push Docker Image
         run: |
-          echo "Starting Album build process"
+          docker buildx build --platform linux/amd64,linux/arm64 -t zzingo5/hatongsu-album:$TIMESTAMP -f ./apps/album/Dockerfile --target production --push .
 
   build-gateway:
     needs: changes
     if: ${{ needs.changes.outputs.gateway == 'true' }}
     runs-on: ubuntu-latest
     steps:
-      - name: Debug Gateway Build Trigger
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Login to Dockerhub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Set Timestamp
+        run: echo "TIMESTAMP=$(date -u +"%Y-%m-%dT%H-%M-%S")" >> $GITHUB_ENV
+
+      - name: Build and Push Docker Image
         run: |
-          echo "Starting Gateway build process"
+          docker buildx build --platform linux/amd64,linux/arm64 -t zzingo5/hatongsu-gateway:$TIMESTAMP -f ./apps/gateway/Dockerfile --target production --push .
 
   build-user:
     needs: changes
     if: ${{ needs.changes.outputs.user == 'true' }}
     runs-on: ubuntu-latest
     steps:
-      - name: Debug User Build Trigger
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Login to Dockerhub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Set Timestamp
+        run: echo "TIMESTAMP=$(date -u +"%Y-%m-%dT%H-%M-%S")" >> $GITHUB_ENV
+
+      - name: Build and Push Docker Image
         run: |
-          echo "Starting User build process"
+          docker buildx build --platform linux/amd64,linux/arm64 -t zzingo5/hatongsu-user:$TIMESTAMP -f ./apps/user/Dockerfile --target production --push .
