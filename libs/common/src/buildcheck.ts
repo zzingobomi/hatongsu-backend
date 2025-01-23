@@ -1,1 +1,1 @@
-console.log('buildcheck.ts');
+console.log('buildcheck');
