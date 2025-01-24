@@ -1,1 +1,1 @@
-console.log('buildcheck 2');
+console.log('buildcheck');
