@@ -1,6 +1,4 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { AppConfig } from '../config/app-config.type';
 import { ClientProxy } from '@nestjs/microservices';
 import {
   ALBUM_QUEUE_SERVICE,
@@ -13,6 +11,7 @@ interface AlbumImageUploadPayload {
   size: number;
   mimetype: string;
   buffer: string;
+  lastModifiedTimestamp: number;
 }
 
 @Injectable()
@@ -21,13 +20,17 @@ export class FileService {
     @Inject(ALBUM_QUEUE_SERVICE) private readonly client: ClientProxy,
   ) {}
 
-  async uploadFiles(files: Express.Multer.File[]) {
-    files.forEach((file) => {
+  async uploadFiles(
+    files: Express.Multer.File[],
+    lastModifiedTimestamps: number[],
+  ) {
+    files.forEach((file, index) => {
       const payload: AlbumImageUploadPayload = {
         filename: file.originalname,
         size: file.size,
         mimetype: file.mimetype,
         buffer: file.buffer.toString('base64'),
+        lastModifiedTimestamp: lastModifiedTimestamps[index],
       };
 
       this.client.emit(FILE_UPLOADED_EVENT, payload);

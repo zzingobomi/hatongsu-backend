@@ -21,6 +21,7 @@ import { AlbumModule } from './album/album.module';
         url: configService.getOrThrow('app.dbUrl', { infer: true }),
         autoLoadEntities: true,
         synchronize: true,
+        timezone: 'Z',
       }),
       inject: [ConfigService],
     }),

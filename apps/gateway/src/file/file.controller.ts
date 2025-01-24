@@ -1,5 +1,7 @@
 import {
+  Body,
   Controller,
+  ParseArrayPipe,
   Post,
   UploadedFiles,
   UseInterceptors,
@@ -13,7 +15,14 @@ export class FileController {
 
   @Post('uploads')
   @UseInterceptors(FilesInterceptor('files', 100))
-  async uploadFiles(@UploadedFiles() files: Express.Multer.File[]) {
-    return this.fileService.uploadFiles(files);
+  async uploadFiles(
+    @UploadedFiles() files: Express.Multer.File[],
+    @Body(
+      'lastModifiedTimestamps',
+      new ParseArrayPipe({ items: Number, separator: ',' }),
+    )
+    lastModifiedTimestamps: number[],
+  ) {
+    return this.fileService.uploadFiles(files, lastModifiedTimestamps);
   }
 }

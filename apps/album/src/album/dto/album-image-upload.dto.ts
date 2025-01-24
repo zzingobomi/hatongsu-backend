@@ -3,4 +3,5 @@ export interface AlbumImageUploadDto {
   size: number;
   mimetype: string;
   buffer: string;
+  lastModifiedTimestamp: number;
 }
