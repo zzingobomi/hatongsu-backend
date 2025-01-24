@@ -17,7 +17,7 @@ export class AlbumImageStorage implements AlbumImageStorageOutputPort {
         infer: true,
       }),
       port: this.configService.getOrThrow('app.minio.port', { infer: true }),
-      useSSL: false,
+      useSSL: process.env.NODE_ENV === 'production' ? true : false,
       accessKey: this.configService.getOrThrow('app.minio.accessKey', {
         infer: true,
       }),
