@@ -27,8 +27,13 @@ export class AlbumImageUploadUseCase {
     const dateTimeOriginal = parseExifTime(exifMetaData.dateTimeOriginal);
     const dateTimeDigitized = parseExifTime(exifMetaData.dateTimeDigitized);
 
-    // fallback 순서: dateTimeOriginal -> dateTime -> dateTimeDigitized
-    const resolvedDateTime = dateTimeOriginal || dateTime || dateTimeDigitized;
+    // timezone 정보 제거 후 db 저장
+    const isoString = new Date(data.lastModifiedTimestamp).toISOString();
+    const dateWithoutTimezone = new Date(isoString.replace('Z', ''));
+
+    // fallback 순서: dateTimeOriginal -> dateTime -> dateTimeDigitized -> lastModifiedTimestamp
+    const resolvedDateTime =
+      dateTimeOriginal || dateTime || dateTimeDigitized || dateWithoutTimezone;
 
     // AlbumImage 생성
     const albumImage = new AlbumImageDomain();

@@ -20,6 +20,7 @@ import { AppConfig } from './config/app-config.type';
         url: configService.getOrThrow('app.dbUrl', { infer: true }),
         autoLoadEntities: true,
         synchronize: true,
+        timezone: 'Z',
       }),
       inject: [ConfigService],
     }),
