@@ -60,6 +60,7 @@ graph TD
   - date 타입으로 변환시 db에 로컬타임으로 저장되는 것을 방지하기 위해 타임존 정보 제거후 저장
   - 핸드폰 등 exif 정보는 로컬타임으로 들어올까? 확인후 utc 저장방식 체크해보기
 
+- NODE_TLS_REJECT_UNAUTHORIZED 이거 없이 인증서 신뢰 어떻게 해야하는지 확인해보기
 - production db migration 세팅하기
 - cursor 에서 ISO 변환이 꼭 필요한 것인가?
 - prod 직접 푸쉬는 가능한데... on: pull_request 안넣어서 그런가? 테스트 해보기
