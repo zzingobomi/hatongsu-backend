@@ -79,4 +79,8 @@ export class AlbumService implements OnModuleInit {
       }),
     );
   }
+
+  getAlbumImagesGallerySpot() {
+    return lastValueFrom(this.albumService.getAlbumImagesGallerySpot({}));
+  }
 }

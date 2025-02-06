@@ -2,10 +2,12 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  ManyToOne,
   PrimaryColumn,
   UpdateDateColumn,
   VersionColumn,
 } from 'typeorm';
+import { GallerySpotEntity } from './gallery-spot.entity';
 
 @Entity('album_image')
 export class AlbumImageEntity {
@@ -26,6 +28,9 @@ export class AlbumImageEntity {
 
   @Column({ nullable: true })
   dateTimeDigitized: Date;
+
+  @ManyToOne(() => GallerySpotEntity, (spot) => spot.images, { nullable: true })
+  gallerySpot: GallerySpotEntity;
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;

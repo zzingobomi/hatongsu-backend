@@ -43,4 +43,9 @@ export class AlbumController {
   async getImageCountDate(@Query() query: AlbumImageCountDateDto) {
     return this.albumService.getImageCountDate(query);
   }
+
+  @Get('gallery/spot')
+  async getAlbumImagesGallerySpot() {
+    return this.albumService.getAlbumImagesGallerySpot();
+  }
 }

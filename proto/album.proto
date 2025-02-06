@@ -3,11 +3,15 @@ syntax = "proto3";
 package album;
 
 service AlbumService {
+    // MainPage, Dashboard
     rpc GetAlbumImages(AlbumImageRequest) returns (AlbumImageResponse);
     rpc GetAlbumImagesCursor(AlbumImageCursorRequest) returns (AlbumImageCursorResponse);
     rpc GetAlbumImagesInfinite(AlbumImageInfiniteRequest) returns (AlbumImageInfiniteResponse);
     rpc GetAlbumImageFerrisNext(AlbumImageFerrisNextRequest) returns (AlbumImageFerrisNextResponse);
     rpc GetAlbumImageCountDate(AlbumImageCountDateRequest) returns (AlbumImageCountDateResponse);
+
+    // Gallery
+    rpc GetAlbumImagesGallerySpot(AlbumImageGallerySpotRequest) returns (AlbumImageGallerySpotResponse);
 }
 
 message AlbumImageProto {
@@ -87,4 +91,11 @@ message CountDateResponse {
 
 message AlbumImageCountDateResponse {
     repeated CountDateResponse result = 1;    
+}
+
+message AlbumImageGallerySpotRequest {    
+}
+
+message AlbumImageGallerySpotResponse {
+    repeated AlbumImageProto album_images = 1;    
 }

@@ -231,4 +231,16 @@ export class AlbumImageRepository implements AlbumImageDatabaseOutputPort {
       count: parseInt(result.count),
     }));
   }
+
+  // TODO: 추후 GallerySpotEntity 를 이용해서 관리할 수 있도록 수정
+  async getAlbumImagesGallerySpot(): Promise<AlbumImageDomain[]> {
+    const entities = await this.albumRepository.find({
+      take: 10,
+      order: {
+        dateTimeOriginal: 'DESC',
+      },
+    });
+
+    return entities.map((entity) => AlbumImageMapper.toDomain(entity));
+  }
 }

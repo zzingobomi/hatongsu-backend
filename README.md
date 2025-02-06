@@ -53,6 +53,11 @@ graph TD
 
 ##### TODO
 
+- Gallery Spot 고도화 작업
+
+  - 현재는 dateTimeOriginal DESC 로 상위 10개만 리턴
+  - GallerySpotEntity 를 이용하여 관리자가 갤러리 노출 이미지를 관리할 수 있도록 수정
+
 - utc 적용
 
   - 현재 postgres 는 'Asia/seoul' 로 되어있는 상태
