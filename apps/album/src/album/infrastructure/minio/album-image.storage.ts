@@ -41,6 +41,10 @@ export class AlbumImageStorage implements AlbumImageStorageOutputPort {
     }
   }
 
+  async deleteObject(bucketName: string, objectKey: string): Promise<void> {
+    await this.minioClient.removeObject(bucketName, objectKey);
+  }
+
   async generatePresignedUrl(
     bucketName: string,
     objectKey: string,

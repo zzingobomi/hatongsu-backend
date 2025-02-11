@@ -16,6 +16,7 @@ import { GetAlbumImageFerrisNextUseCase } from './usecase/get-album-image-ferris
 import { GetAlbumImageCountDateUseCase } from './usecase/get-album-image-count-date.usecase';
 import { GallerySpotEntity } from './infrastructure/typeorm/entity/gallery-spot.entity';
 import { GetAlbumImagesGallerySpotUseCase } from './usecase/get-album-images-gallery-spot.usecase';
+import { DeleteAlbumImagesUseCase } from './usecase/delete-album-images.usecase';
 
 @Module({
   imports: [TypeOrmModule.forFeature([AlbumImageEntity, GallerySpotEntity])],
@@ -28,6 +29,7 @@ import { GetAlbumImagesGallerySpotUseCase } from './usecase/get-album-images-gal
     GetAlbumImageFerrisNextUseCase,
     GetAlbumImageCountDateUseCase,
     GetAlbumImagesGallerySpotUseCase,
+    DeleteAlbumImagesUseCase,
     {
       provide: ALBUM_IMAGE_DATABASE_OUTPUT_PORT,
       useClass: AlbumImageRepository,

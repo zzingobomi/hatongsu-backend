@@ -2,7 +2,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { AlbumImageDomain } from 'apps/album/src/album/domain/album-image.domain';
 import { AlbumImageDatabaseOutputPort } from 'apps/album/src/album/port/output/album-image-database.output-port';
 import { AlbumImageEntity } from '../entity/album-image.entity';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { AlbumImageMapper } from '../mapper/album-image.mapper';
 import {
   AlbumImageCursorRequestDto,
@@ -230,6 +230,18 @@ export class AlbumImageRepository implements AlbumImageDatabaseOutputPort {
       date: dayjs(result.date).format('YYYY-MM-DD'),
       count: parseInt(result.count),
     }));
+  }
+
+  async getAlbumImagesByIds(imageIds: string[]): Promise<AlbumImageDomain[]> {
+    const entities = await this.albumRepository.find({
+      where: { id: In(imageIds) },
+    });
+    return entities.map((entity) => AlbumImageMapper.toDomain(entity));
+  }
+
+  async deleteAlbumImages(imageIds: string[]): Promise<number> {
+    const result = await this.albumRepository.delete({ id: In(imageIds) });
+    return result.affected || 0;
   }
 
   // TODO: 추후 GallerySpotEntity 를 이용해서 관리할 수 있도록 수정

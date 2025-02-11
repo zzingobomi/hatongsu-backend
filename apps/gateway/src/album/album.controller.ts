@@ -1,4 +1,11 @@
-import { Controller, Get, Query, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 import { AlbumService } from './album.service';
 import {
   QueryAlbumImageCursorDto,
@@ -8,6 +15,7 @@ import {
 } from './dto/query-album-image.dto';
 import { TokenGuard } from '../auth/guard/token.huard';
 import { AlbumImageCountDateDto } from './dto/album-image-count-date.dto';
+import { DeleteAlbumImageDto } from './dto/delete-album-image.dto';
 
 @Controller('album')
 export class AlbumController {
@@ -42,6 +50,12 @@ export class AlbumController {
   @Get('statistic/count-date')
   async getImageCountDate(@Query() query: AlbumImageCountDateDto) {
     return this.albumService.getImageCountDate(query);
+  }
+
+  @Delete()
+  @UseGuards(TokenGuard)
+  async deleteAlbumImages(@Body() dto: DeleteAlbumImageDto) {
+    return this.albumService.deleteAlbumImages(dto.imageIds);
   }
 
   @Get('gallery/spot')

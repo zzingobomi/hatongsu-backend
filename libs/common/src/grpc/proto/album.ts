@@ -101,6 +101,15 @@ export interface AlbumImageCountDateResponse {
   result: CountDateResponse[];
 }
 
+export interface DeleteAlbumImagesRequest {
+  imageIds: string[];
+}
+
+export interface DeleteAlbumImagesResponse {
+  success: boolean;
+  deletedCount: number;
+}
+
 export interface AlbumImageGallerySpotRequest {
 }
 
@@ -131,6 +140,8 @@ export interface AlbumServiceClient {
     request: AlbumImageCountDateRequest,
     metadata?: Metadata,
   ): Observable<AlbumImageCountDateResponse>;
+
+  deleteAlbumImages(request: DeleteAlbumImagesRequest, metadata?: Metadata): Observable<DeleteAlbumImagesResponse>;
 
   /** Gallery */
 
@@ -168,6 +179,11 @@ export interface AlbumServiceController {
     metadata?: Metadata,
   ): Promise<AlbumImageCountDateResponse> | Observable<AlbumImageCountDateResponse> | AlbumImageCountDateResponse;
 
+  deleteAlbumImages(
+    request: DeleteAlbumImagesRequest,
+    metadata?: Metadata,
+  ): Promise<DeleteAlbumImagesResponse> | Observable<DeleteAlbumImagesResponse> | DeleteAlbumImagesResponse;
+
   /** Gallery */
 
   getAlbumImagesGallerySpot(
@@ -184,6 +200,7 @@ export function AlbumServiceControllerMethods() {
       "getAlbumImagesInfinite",
       "getAlbumImageFerrisNext",
       "getAlbumImageCountDate",
+      "deleteAlbumImages",
       "getAlbumImagesGallerySpot",
     ];
     for (const method of grpcMethods) {

@@ -80,6 +80,10 @@ export class AlbumService implements OnModuleInit {
     );
   }
 
+  deleteAlbumImages(imageIds: string[]) {
+    return lastValueFrom(this.albumService.deleteAlbumImages({ imageIds }));
+  }
+
   getAlbumImagesGallerySpot() {
     return lastValueFrom(this.albumService.getAlbumImagesGallerySpot({}));
   }

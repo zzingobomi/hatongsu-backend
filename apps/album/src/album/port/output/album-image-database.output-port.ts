@@ -23,6 +23,8 @@ export interface AlbumImageDatabaseOutputPort {
   getAlbumImageCountDate(
     query: AlbumImageCountDateDto,
   ): Promise<{ date: string; count: number }[]>;
+  getAlbumImagesByIds(imageIds: string[]): Promise<AlbumImageDomain[]>;
+  deleteAlbumImages(imageIds: string[]): Promise<number>;
   getAlbumImagesGallerySpot(): Promise<AlbumImageDomain[]>;
   saveAlbumImage(albumImage: AlbumImageDomain): Promise<AlbumImageDomain>;
   updateAlbumImage(albumImage: AlbumImageDomain): Promise<AlbumImageDomain>;

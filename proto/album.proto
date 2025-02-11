@@ -9,6 +9,7 @@ service AlbumService {
     rpc GetAlbumImagesInfinite(AlbumImageInfiniteRequest) returns (AlbumImageInfiniteResponse);
     rpc GetAlbumImageFerrisNext(AlbumImageFerrisNextRequest) returns (AlbumImageFerrisNextResponse);
     rpc GetAlbumImageCountDate(AlbumImageCountDateRequest) returns (AlbumImageCountDateResponse);
+    rpc DeleteAlbumImages(DeleteAlbumImagesRequest) returns (DeleteAlbumImagesResponse);
 
     // Gallery
     rpc GetAlbumImagesGallerySpot(AlbumImageGallerySpotRequest) returns (AlbumImageGallerySpotResponse);
@@ -91,6 +92,15 @@ message CountDateResponse {
 
 message AlbumImageCountDateResponse {
     repeated CountDateResponse result = 1;    
+}
+
+message DeleteAlbumImagesRequest {
+    repeated string image_ids = 1;
+}
+
+message DeleteAlbumImagesResponse {
+    bool success = 1;
+    int32 deleted_count = 2;
 }
 
 message AlbumImageGallerySpotRequest {    
