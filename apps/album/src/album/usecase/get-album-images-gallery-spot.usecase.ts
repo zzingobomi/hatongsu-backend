@@ -9,6 +9,7 @@ import { AlbumImageMapper } from '../infrastructure/grpc/mapper/album-image.mapp
 import { AlbumImageStorageOutputPort } from '../port/output/album-image-storage.output-port';
 import { ConfigService } from '@nestjs/config';
 import { AppConfig } from '../../config/app-config.type';
+import { GallerySpotType } from '../type/gallery-spot-type';
 
 @Injectable()
 export class GetAlbumImagesGallerySpotUseCase {
@@ -23,25 +24,33 @@ export class GetAlbumImagesGallerySpotUseCase {
   async execute(
     request: AlbumMicroservice.AlbumImageGallerySpotRequest,
   ): Promise<AlbumMicroservice.AlbumImageGallerySpotResponse> {
-    const albumImages =
+    const groupedImages =
       await this.albumImageDatabaseOutputPort.getAlbumImagesGallerySpot();
+
+    const spotImages: Record<string, AlbumMicroservice.AlbumImageList> = {};
 
     const bucketName = this.configService.getOrThrow('app.minio.bucketName', {
       infer: true,
     });
 
-    const albumImagesWithUrls = await Promise.all(
-      albumImages.map(async (albumImage) => ({
-        ...AlbumImageMapper.toProto(
-          albumImage,
-          await this.albumImageStorageOutputPort.generatePresignedUrl(
-            bucketName,
-            albumImage.objectKey,
-          ),
-        ),
-      })),
-    );
+    for (const [spotType, images] of Object.entries(groupedImages)) {
+      if (spotType === GallerySpotType.None) continue;
 
-    return { albumImages: albumImagesWithUrls };
+      const imagesWithUrls = await Promise.all(
+        images.map(async (image) => ({
+          ...AlbumImageMapper.toProto(
+            image,
+            await this.albumImageStorageOutputPort.generatePresignedUrl(
+              bucketName,
+              image.objectKey,
+            ),
+          ),
+        })),
+      );
+
+      spotImages[spotType] = { images: imagesWithUrls };
+    }
+
+    return { spotImages };
   }
 }

@@ -108,8 +108,12 @@ message DeleteAlbumImagesResponse {
 message AlbumImageGallerySpotRequest {    
 }
 
+message AlbumImageList {
+    repeated AlbumImageProto images = 1;
+}
+
 message AlbumImageGallerySpotResponse {
-    repeated AlbumImageProto album_images = 1;    
+    map<string, AlbumImageList> spot_images = 1;
 }
 
 message UpdateGallerySpotRequest {

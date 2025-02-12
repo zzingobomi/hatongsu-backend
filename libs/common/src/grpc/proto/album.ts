@@ -117,8 +117,17 @@ export interface DeleteAlbumImagesResponse {
 export interface AlbumImageGallerySpotRequest {
 }
 
+export interface AlbumImageList {
+  images: AlbumImageProto[];
+}
+
 export interface AlbumImageGallerySpotResponse {
-  albumImages: AlbumImageProto[];
+  spotImages: { [key: string]: AlbumImageList };
+}
+
+export interface AlbumImageGallerySpotResponse_SpotImagesEntry {
+  key: string;
+  value: AlbumImageList | undefined;
 }
 
 export interface UpdateGallerySpotRequest {

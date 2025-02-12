@@ -27,7 +27,7 @@ export interface AlbumImageDatabaseOutputPort {
   ): Promise<{ date: string; count: number }[]>;
   getAlbumImagesByIds(imageIds: string[]): Promise<AlbumImageDomain[]>;
   deleteAlbumImages(imageIds: string[]): Promise<number>;
-  getAlbumImagesGallerySpot(): Promise<AlbumImageDomain[]>;
+  getAlbumImagesGallerySpot(): Promise<Record<string, AlbumImageDomain[]>>;
   saveAlbumImage(albumImage: AlbumImageDomain): Promise<AlbumImageDomain>;
   updateAlbumImage(albumImage: AlbumImageDomain): Promise<AlbumImageDomain>;
   findAlbumImageBySpot(

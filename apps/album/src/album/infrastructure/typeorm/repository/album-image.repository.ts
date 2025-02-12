@@ -2,7 +2,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { AlbumImageDomain } from 'apps/album/src/album/domain/album-image.domain';
 import { AlbumImageDatabaseOutputPort } from 'apps/album/src/album/port/output/album-image-database.output-port';
 import { AlbumImageEntity } from '../entity/album-image.entity';
-import { In, Repository } from 'typeorm';
+import { In, IsNull, Not, Repository } from 'typeorm';
 import { AlbumImageMapper } from '../mapper/album-image.mapper';
 import {
   AlbumImageCursorRequestDto,
@@ -252,16 +252,27 @@ export class AlbumImageRepository implements AlbumImageDatabaseOutputPort {
     return result.affected || 0;
   }
 
-  // TODO: Implement this method
-  async getAlbumImagesGallerySpot(): Promise<AlbumImageDomain[]> {
+  async getAlbumImagesGallerySpot(): Promise<
+    Record<string, AlbumImageDomain[]>
+  > {
     const entities = await this.albumRepository.find({
-      take: 10,
+      where: {
+        gallerySpotType: Not(IsNull()),
+      },
       order: {
+        gallerySpotType: 'ASC',
         dateTimeOriginal: 'DESC',
       },
     });
 
-    return entities.map((entity) => AlbumImageMapper.toDomain(entity));
+    const grouped = entities.reduce((acc, entity) => {
+      const spotType = entity.gallerySpotType;
+      if (!acc[spotType]) acc[spotType] = [];
+      acc[spotType].push(AlbumImageMapper.toDomain(entity));
+      return acc;
+    }, {});
+
+    return grouped;
   }
 
   async findAlbumImageBySpot(
