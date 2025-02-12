@@ -6,8 +6,10 @@ import {
   AlbumImageInfiniteRequestDto,
   AlbumImageRequestDto,
 } from '../../dto/album-image-request.dto';
+import { GallerySpotType } from '../../type/gallery-spot-type';
 
 export interface AlbumImageDatabaseOutputPort {
+  findAlbumImageById(imageId: string): Promise<AlbumImageDomain | null>;
   getAlbumImages(
     query: AlbumImageRequestDto,
   ): Promise<[AlbumImageDomain[], number]>;
@@ -28,4 +30,11 @@ export interface AlbumImageDatabaseOutputPort {
   getAlbumImagesGallerySpot(): Promise<AlbumImageDomain[]>;
   saveAlbumImage(albumImage: AlbumImageDomain): Promise<AlbumImageDomain>;
   updateAlbumImage(albumImage: AlbumImageDomain): Promise<AlbumImageDomain>;
+  findAlbumImageBySpot(
+    gallerySpotType: GallerySpotType,
+  ): Promise<AlbumImageDomain | null>;
+  updateAlbumImageSpot(
+    imageId: string,
+    gallerySpotType: GallerySpotType,
+  ): Promise<AlbumImageDomain>;
 }

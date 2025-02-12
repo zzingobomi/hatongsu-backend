@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  Put,
   Query,
   UseGuards,
 } from '@nestjs/common';
@@ -16,6 +17,7 @@ import {
 import { TokenGuard } from '../auth/guard/token.huard';
 import { AlbumImageCountDateDto } from './dto/album-image-count-date.dto';
 import { DeleteAlbumImageDto } from './dto/delete-album-image.dto';
+import { UpdateGallerySpotDto } from './dto/update-gallery-spot.dto';
 
 @Controller('album')
 export class AlbumController {
@@ -61,5 +63,11 @@ export class AlbumController {
   @Get('gallery/spot')
   async getAlbumImagesGallerySpot() {
     return this.albumService.getAlbumImagesGallerySpot();
+  }
+
+  @Put('gallery/spot')
+  @UseGuards(TokenGuard)
+  async updateGallerySpot(@Body() dto: UpdateGallerySpotDto) {
+    return this.albumService.updateGallerySpot(dto);
   }
 }

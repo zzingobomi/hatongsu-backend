@@ -7,7 +7,7 @@ import {
   UpdateDateColumn,
   VersionColumn,
 } from 'typeorm';
-import { GallerySpotEntity } from './gallery-spot.entity';
+import { GallerySpotType } from '../../../type/gallery-spot-type';
 
 @Entity('album_image')
 export class AlbumImageEntity {
@@ -29,8 +29,12 @@ export class AlbumImageEntity {
   @Column({ nullable: true })
   dateTimeDigitized: Date;
 
-  @ManyToOne(() => GallerySpotEntity, (spot) => spot.images, { nullable: true })
-  gallerySpot: GallerySpotEntity;
+  @Column({
+    type: 'enum',
+    enum: GallerySpotType,
+    default: GallerySpotType.None,
+  })
+  gallerySpotType: GallerySpotType;
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;

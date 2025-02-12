@@ -30,6 +30,10 @@ export interface AlbumImageProto {
   dateTimeDigitized?:
     | string
     | undefined;
+  /** 갤러리 스팟 타입 */
+  gallerySpotType?:
+    | string
+    | undefined;
   /** 생성 시간 */
   createdAt: string;
   /** 수정 시간 */
@@ -117,6 +121,15 @@ export interface AlbumImageGallerySpotResponse {
   albumImages: AlbumImageProto[];
 }
 
+export interface UpdateGallerySpotRequest {
+  imageId: string;
+  spotType: string;
+}
+
+export interface UpdateGallerySpotResponse {
+  success: boolean;
+}
+
 export const ALBUM_PACKAGE_NAME = "album";
 
 export interface AlbumServiceClient {
@@ -149,6 +162,8 @@ export interface AlbumServiceClient {
     request: AlbumImageGallerySpotRequest,
     metadata?: Metadata,
   ): Observable<AlbumImageGallerySpotResponse>;
+
+  updateGallerySpot(request: UpdateGallerySpotRequest, metadata?: Metadata): Observable<UpdateGallerySpotResponse>;
 }
 
 export interface AlbumServiceController {
@@ -190,6 +205,11 @@ export interface AlbumServiceController {
     request: AlbumImageGallerySpotRequest,
     metadata?: Metadata,
   ): Promise<AlbumImageGallerySpotResponse> | Observable<AlbumImageGallerySpotResponse> | AlbumImageGallerySpotResponse;
+
+  updateGallerySpot(
+    request: UpdateGallerySpotRequest,
+    metadata?: Metadata,
+  ): Promise<UpdateGallerySpotResponse> | Observable<UpdateGallerySpotResponse> | UpdateGallerySpotResponse;
 }
 
 export function AlbumServiceControllerMethods() {
@@ -202,6 +222,7 @@ export function AlbumServiceControllerMethods() {
       "getAlbumImageCountDate",
       "deleteAlbumImages",
       "getAlbumImagesGallerySpot",
+      "updateGallerySpot",
     ];
     for (const method of grpcMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);

@@ -13,12 +13,20 @@ import {
 import * as dayjs from 'dayjs';
 import { NotFoundException } from '@nestjs/common';
 import { AlbumImageCountDateDto } from '../../../dto/album-image-count-date.dto';
+import { GallerySpotType } from '../../../type/gallery-spot-type';
 
 export class AlbumImageRepository implements AlbumImageDatabaseOutputPort {
   constructor(
     @InjectRepository(AlbumImageEntity)
     private readonly albumRepository: Repository<AlbumImageEntity>,
   ) {}
+
+  async findAlbumImageById(imageId: string): Promise<AlbumImageDomain | null> {
+    const entity = await this.albumRepository.findOne({
+      where: { id: imageId },
+    });
+    return entity ? AlbumImageMapper.toDomain(entity) : null;
+  }
 
   async saveAlbumImage(album: AlbumImageDomain): Promise<AlbumImageDomain> {
     const result = await this.albumRepository.save(album);
@@ -244,7 +252,7 @@ export class AlbumImageRepository implements AlbumImageDatabaseOutputPort {
     return result.affected || 0;
   }
 
-  // TODO: 추후 GallerySpotEntity 를 이용해서 관리할 수 있도록 수정
+  // TODO: Implement this method
   async getAlbumImagesGallerySpot(): Promise<AlbumImageDomain[]> {
     const entities = await this.albumRepository.find({
       take: 10,
@@ -254,5 +262,26 @@ export class AlbumImageRepository implements AlbumImageDatabaseOutputPort {
     });
 
     return entities.map((entity) => AlbumImageMapper.toDomain(entity));
+  }
+
+  async findAlbumImageBySpot(
+    gallerySpotType: GallerySpotType,
+  ): Promise<AlbumImageDomain | null> {
+    const entity = await this.albumRepository.findOne({
+      where: { gallerySpotType },
+    });
+    return entity ? AlbumImageMapper.toDomain(entity) : null;
+  }
+
+  async updateAlbumImageSpot(
+    imageId: string,
+    gallerySpotType: GallerySpotType,
+  ): Promise<AlbumImageDomain> {
+    const image = await this.findAlbumImageById(imageId);
+    if (!image) {
+      throw new NotFoundException(`Image with id ${imageId} not found`);
+    }
+    image.gallerySpotType = gallerySpotType;
+    return this.updateAlbumImage(image);
   }
 }
