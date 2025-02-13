@@ -10,6 +10,8 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const configService = app.get(ConfigService<{ app: AppConfig }>);
 
+  console.log('user');
+
   // gRPC 마이크로서비스 설정
   app.connectMicroservice<MicroserviceOptions>({
     transport: Transport.GRPC,
