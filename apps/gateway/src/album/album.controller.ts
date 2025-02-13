@@ -1,4 +1,12 @@
-import { Controller, Get, Query, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Put,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 import { AlbumService } from './album.service';
 import {
   QueryAlbumImageCursorDto,
@@ -6,8 +14,13 @@ import {
   QueryAlbumImageFerrisNextDto,
   QueryAlbumImageInfiniteDto,
 } from './dto/query-album-image.dto';
-import { TokenGuard } from '../auth/guard/token.huard';
+import { TokenGuard } from '../auth/guard/token.guard';
 import { AlbumImageCountDateDto } from './dto/album-image-count-date.dto';
+import { DeleteAlbumImageDto } from './dto/delete-album-image.dto';
+import { UpdateGallerySpotDto } from './dto/update-gallery-spot.dto';
+import { RoleGuard } from '../auth/guard/role.guard';
+import { Role } from '../auth/decorator/role.decorator';
+import { UserRole } from '../const/user.role';
 
 @Controller('album')
 export class AlbumController {
@@ -42,5 +55,26 @@ export class AlbumController {
   @Get('statistic/count-date')
   async getImageCountDate(@Query() query: AlbumImageCountDateDto) {
     return this.albumService.getImageCountDate(query);
+  }
+
+  @Delete()
+  @UseGuards(TokenGuard)
+  @Role(UserRole.ADMIN)
+  @UseGuards(RoleGuard)
+  async deleteAlbumImages(@Body() dto: DeleteAlbumImageDto) {
+    return this.albumService.deleteAlbumImages(dto.imageIds);
+  }
+
+  @Get('gallery/spot')
+  async getAlbumImagesGallerySpot() {
+    return this.albumService.getAlbumImagesGallerySpot();
+  }
+
+  @Put('gallery/spot')
+  @UseGuards(TokenGuard)
+  @Role(UserRole.ADMIN)
+  @UseGuards(RoleGuard)
+  async updateGallerySpot(@Body() dto: UpdateGallerySpotDto) {
+    return this.albumService.updateGallerySpot(dto);
   }
 }

@@ -30,6 +30,10 @@ export interface AlbumImageProto {
   dateTimeDigitized?:
     | string
     | undefined;
+  /** 갤러리 스팟 타입 */
+  gallerySpotType?:
+    | string
+    | undefined;
   /** 생성 시간 */
   createdAt: string;
   /** 수정 시간 */
@@ -101,9 +105,45 @@ export interface AlbumImageCountDateResponse {
   result: CountDateResponse[];
 }
 
+export interface DeleteAlbumImagesRequest {
+  imageIds: string[];
+}
+
+export interface DeleteAlbumImagesResponse {
+  success: boolean;
+  deletedCount: number;
+}
+
+export interface AlbumImageGallerySpotRequest {
+}
+
+export interface AlbumImageList {
+  images: AlbumImageProto[];
+}
+
+export interface AlbumImageGallerySpotResponse {
+  spotImages: { [key: string]: AlbumImageList };
+}
+
+export interface AlbumImageGallerySpotResponse_SpotImagesEntry {
+  key: string;
+  value: AlbumImageList | undefined;
+}
+
+export interface UpdateGallerySpotRequest {
+  imageId: string;
+  spotType: string;
+}
+
+export interface UpdateGallerySpotResponse {
+  success: boolean;
+}
+
 export const ALBUM_PACKAGE_NAME = "album";
 
 export interface AlbumServiceClient {
+  /** MainPage, Dashboard */
+
   getAlbumImages(request: AlbumImageRequest, metadata?: Metadata): Observable<AlbumImageResponse>;
 
   getAlbumImagesCursor(request: AlbumImageCursorRequest, metadata?: Metadata): Observable<AlbumImageCursorResponse>;
@@ -122,9 +162,22 @@ export interface AlbumServiceClient {
     request: AlbumImageCountDateRequest,
     metadata?: Metadata,
   ): Observable<AlbumImageCountDateResponse>;
+
+  deleteAlbumImages(request: DeleteAlbumImagesRequest, metadata?: Metadata): Observable<DeleteAlbumImagesResponse>;
+
+  /** Gallery */
+
+  getAlbumImagesGallerySpot(
+    request: AlbumImageGallerySpotRequest,
+    metadata?: Metadata,
+  ): Observable<AlbumImageGallerySpotResponse>;
+
+  updateGallerySpot(request: UpdateGallerySpotRequest, metadata?: Metadata): Observable<UpdateGallerySpotResponse>;
 }
 
 export interface AlbumServiceController {
+  /** MainPage, Dashboard */
+
   getAlbumImages(
     request: AlbumImageRequest,
     metadata?: Metadata,
@@ -149,6 +202,23 @@ export interface AlbumServiceController {
     request: AlbumImageCountDateRequest,
     metadata?: Metadata,
   ): Promise<AlbumImageCountDateResponse> | Observable<AlbumImageCountDateResponse> | AlbumImageCountDateResponse;
+
+  deleteAlbumImages(
+    request: DeleteAlbumImagesRequest,
+    metadata?: Metadata,
+  ): Promise<DeleteAlbumImagesResponse> | Observable<DeleteAlbumImagesResponse> | DeleteAlbumImagesResponse;
+
+  /** Gallery */
+
+  getAlbumImagesGallerySpot(
+    request: AlbumImageGallerySpotRequest,
+    metadata?: Metadata,
+  ): Promise<AlbumImageGallerySpotResponse> | Observable<AlbumImageGallerySpotResponse> | AlbumImageGallerySpotResponse;
+
+  updateGallerySpot(
+    request: UpdateGallerySpotRequest,
+    metadata?: Metadata,
+  ): Promise<UpdateGallerySpotResponse> | Observable<UpdateGallerySpotResponse> | UpdateGallerySpotResponse;
 }
 
 export function AlbumServiceControllerMethods() {
@@ -159,6 +229,9 @@ export function AlbumServiceControllerMethods() {
       "getAlbumImagesInfinite",
       "getAlbumImageFerrisNext",
       "getAlbumImageCountDate",
+      "deleteAlbumImages",
+      "getAlbumImagesGallerySpot",
+      "updateGallerySpot",
     ];
     for (const method of grpcMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);

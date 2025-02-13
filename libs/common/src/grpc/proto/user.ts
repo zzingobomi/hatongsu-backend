@@ -36,6 +36,7 @@ export interface ParseBearerTokenRequest {
 
 export interface ParseBearerTokenResponse {
   sub: string;
+  role: string;
 }
 
 export interface ValidateGoogleTokenRequest {

@@ -1,3 +1,5 @@
+import { GallerySpotType } from '../type/gallery-spot-type';
+
 export class AlbumImageDomain {
   id: string;
   filename: string;
@@ -7,6 +9,9 @@ export class AlbumImageDomain {
   dateTime?: Date;
   dateTimeOriginal?: Date;
   dateTimeDigitized?: Date;
+
+  // Gallery
+  gallerySpotType: GallerySpotType;
 
   createdAt?: Date;
   updatedAt?: Date;

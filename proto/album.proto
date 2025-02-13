@@ -3,11 +3,17 @@ syntax = "proto3";
 package album;
 
 service AlbumService {
+    // MainPage, Dashboard
     rpc GetAlbumImages(AlbumImageRequest) returns (AlbumImageResponse);
     rpc GetAlbumImagesCursor(AlbumImageCursorRequest) returns (AlbumImageCursorResponse);
     rpc GetAlbumImagesInfinite(AlbumImageInfiniteRequest) returns (AlbumImageInfiniteResponse);
     rpc GetAlbumImageFerrisNext(AlbumImageFerrisNextRequest) returns (AlbumImageFerrisNextResponse);
     rpc GetAlbumImageCountDate(AlbumImageCountDateRequest) returns (AlbumImageCountDateResponse);
+    rpc DeleteAlbumImages(DeleteAlbumImagesRequest) returns (DeleteAlbumImagesResponse);
+
+    // Gallery
+    rpc GetAlbumImagesGallerySpot(AlbumImageGallerySpotRequest) returns (AlbumImageGallerySpotResponse);
+    rpc UpdateGallerySpot(UpdateGallerySpotRequest) returns (UpdateGallerySpotResponse);
 }
 
 message AlbumImageProto {
@@ -17,8 +23,9 @@ message AlbumImageProto {
     optional string date_time = 4;              // 이미지 촬영 시간
     optional string date_time_original = 5;     // 원본 촬영 시간
     optional string date_time_digitized = 6;    // 디지털화 시간
-    string created_at = 7;                      // 생성 시간
-    string updated_at = 8;                      // 수정 시간    
+    optional string gallery_spot_type = 7;      // 갤러리 스팟 타입
+    string created_at = 8;                      // 생성 시간
+    string updated_at = 9;                      // 수정 시간    
 }
 
 // message Filter {
@@ -87,4 +94,33 @@ message CountDateResponse {
 
 message AlbumImageCountDateResponse {
     repeated CountDateResponse result = 1;    
+}
+
+message DeleteAlbumImagesRequest {
+    repeated string image_ids = 1;
+}
+
+message DeleteAlbumImagesResponse {
+    bool success = 1;
+    int32 deleted_count = 2;
+}
+
+message AlbumImageGallerySpotRequest {    
+}
+
+message AlbumImageList {
+    repeated AlbumImageProto images = 1;
+}
+
+message AlbumImageGallerySpotResponse {
+    map<string, AlbumImageList> spot_images = 1;
+}
+
+message UpdateGallerySpotRequest {
+    string image_id = 1;
+    string spot_type = 2;
+}
+
+message UpdateGallerySpotResponse {
+    bool success = 1;
 }

@@ -2,7 +2,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { AlbumImageDomain } from 'apps/album/src/album/domain/album-image.domain';
 import { AlbumImageDatabaseOutputPort } from 'apps/album/src/album/port/output/album-image-database.output-port';
 import { AlbumImageEntity } from '../entity/album-image.entity';
-import { Repository } from 'typeorm';
+import { In, IsNull, Not, Repository } from 'typeorm';
 import { AlbumImageMapper } from '../mapper/album-image.mapper';
 import {
   AlbumImageCursorRequestDto,
@@ -13,12 +13,20 @@ import {
 import * as dayjs from 'dayjs';
 import { NotFoundException } from '@nestjs/common';
 import { AlbumImageCountDateDto } from '../../../dto/album-image-count-date.dto';
+import { GallerySpotType } from '../../../type/gallery-spot-type';
 
 export class AlbumImageRepository implements AlbumImageDatabaseOutputPort {
   constructor(
     @InjectRepository(AlbumImageEntity)
     private readonly albumRepository: Repository<AlbumImageEntity>,
   ) {}
+
+  async findAlbumImageById(imageId: string): Promise<AlbumImageDomain | null> {
+    const entity = await this.albumRepository.findOne({
+      where: { id: imageId },
+    });
+    return entity ? AlbumImageMapper.toDomain(entity) : null;
+  }
 
   async saveAlbumImage(album: AlbumImageDomain): Promise<AlbumImageDomain> {
     const result = await this.albumRepository.save(album);
@@ -230,5 +238,61 @@ export class AlbumImageRepository implements AlbumImageDatabaseOutputPort {
       date: dayjs(result.date).format('YYYY-MM-DD'),
       count: parseInt(result.count),
     }));
+  }
+
+  async getAlbumImagesByIds(imageIds: string[]): Promise<AlbumImageDomain[]> {
+    const entities = await this.albumRepository.find({
+      where: { id: In(imageIds) },
+    });
+    return entities.map((entity) => AlbumImageMapper.toDomain(entity));
+  }
+
+  async deleteAlbumImages(imageIds: string[]): Promise<number> {
+    const result = await this.albumRepository.delete({ id: In(imageIds) });
+    return result.affected || 0;
+  }
+
+  async getAlbumImagesGallerySpot(): Promise<
+    Record<string, AlbumImageDomain[]>
+  > {
+    const entities = await this.albumRepository.find({
+      where: {
+        gallerySpotType: Not(IsNull()),
+      },
+      order: {
+        gallerySpotType: 'ASC',
+        dateTimeOriginal: 'DESC',
+      },
+    });
+
+    const grouped = entities.reduce((acc, entity) => {
+      const spotType = entity.gallerySpotType;
+      if (!acc[spotType]) acc[spotType] = [];
+      acc[spotType].push(AlbumImageMapper.toDomain(entity));
+      return acc;
+    }, {});
+
+    return grouped;
+  }
+
+  async findAlbumImageBySpot(
+    gallerySpotType: GallerySpotType,
+  ): Promise<AlbumImageDomain | null> {
+    const entity = await this.albumRepository.findOne({
+      where: { gallerySpotType },
+    });
+    return entity ? AlbumImageMapper.toDomain(entity) : null;
+  }
+
+  async updateAlbumImageSpot(
+    imageId: string,
+    gallerySpotType: GallerySpotType,
+  ): Promise<AlbumImageDomain> {
+    const image = await this.findAlbumImageById(imageId);
+    if (!image) {
+      throw new NotFoundException(`Image with id ${imageId} not found`);
+    }
+    image.gallerySpotType = gallerySpotType;
+    return this.updateAlbumImage(image);
   }
 }

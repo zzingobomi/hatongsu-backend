@@ -12,6 +12,7 @@ export class AlbumImageMapper {
     albumDomain.dateTime = entity.dateTime;
     albumDomain.dateTimeOriginal = entity.dateTimeOriginal;
     albumDomain.dateTimeDigitized = entity.dateTimeDigitized;
+    albumDomain.gallerySpotType = entity.gallerySpotType;
     albumDomain.createdAt = entity.createdAt;
     albumDomain.updatedAt = entity.updatedAt;
 
@@ -27,6 +28,7 @@ export class AlbumImageMapper {
     albumEntity.dateTime = domain.dateTime;
     albumEntity.dateTimeOriginal = domain.dateTimeOriginal;
     albumEntity.dateTimeDigitized = domain.dateTimeDigitized;
+    albumEntity.gallerySpotType = domain.gallerySpotType;
 
     return albumEntity;
   }
