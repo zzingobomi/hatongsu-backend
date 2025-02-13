@@ -1,6 +1,6 @@
 import { Controller, Get, Query, UseGuards } from '@nestjs/common';
 import { UserService } from './user.service';
-import { TokenGuard } from '../auth/guard/token.huard';
+import { TokenGuard } from '../auth/guard/token.guard';
 import { UserPayload } from '../auth/decorator/user-payload.decorator';
 import { UserPayloadDto } from '@app/common/dto';
 import { QueryUserDto } from './dto/query-user.dto';
