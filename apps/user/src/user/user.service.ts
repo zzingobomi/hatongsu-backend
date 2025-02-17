@@ -7,6 +7,8 @@ import { ERROR_MESSAGES } from '@app/common';
 import { QueryUserDto } from './dto/query-user.dto';
 import { UserProvider } from './const/user.provider';
 import * as bcrypt from 'bcrypt';
+import { RpcException } from '@nestjs/microservices';
+import { status } from '@grpc/grpc-js';
 
 @Injectable()
 export class UserService {
@@ -77,7 +79,10 @@ export class UserService {
     });
 
     if (user) {
-      throw new BadRequestException(ERROR_MESSAGES.EMAIL_ALREADY_EXISTS);
+      throw new RpcException({
+        code: status.ALREADY_EXISTS,
+        message: ERROR_MESSAGES.EMAIL_ALREADY_EXISTS,
+      });
     }
 
     const hash = await bcrypt.hash(password, 10);

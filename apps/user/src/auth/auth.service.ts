@@ -18,6 +18,8 @@ import { OAuth2Client } from 'google-auth-library';
 import * as bcrypt from 'bcrypt';
 import { GoogleLoginDto } from './dto/google-login.dto';
 import { UserProvider } from '../user/const/user.provider';
+import { RpcException } from '@nestjs/microservices';
+import { status } from '@grpc/grpc-js';
 
 export enum TokenType {
   BASIC = 'basic',
@@ -47,26 +49,19 @@ export class AuthService {
   }
 
   async register(rawToken: string, registerDto: RegisterDto) {
-    try {
-      const { email, password } = this.parseBasicToken(rawToken);
+    const { email, password } = this.parseBasicToken(rawToken);
 
-      await this.userService.create({
-        ...registerDto,
-        email,
-        password,
-        provider: UserProvider.CREDENTIALS,
-      });
+    await this.userService.create({
+      ...registerDto,
+      email,
+      password,
+      provider: UserProvider.CREDENTIALS,
+    });
 
-      return {
-        success: true,
-        message: SUCCESS_MESSAGES.USER_REGISTRATION_SUCCESS,
-      };
-    } catch (error) {
-      return {
-        success: false,
-        message: error.message || ERROR_MESSAGES.USER_REGISTRATION_FAILED,
-      };
-    }
+    return {
+      success: true,
+      message: SUCCESS_MESSAGES.USER_REGISTRATION_SUCCESS,
+    };
   }
 
   parseBasicToken(rawToken: string) {
@@ -162,13 +157,19 @@ export class AuthService {
     });
 
     if (!user) {
-      throw new BadRequestException(ERROR_MESSAGES.USER_NOT_FOUND);
+      throw new RpcException({
+        code: status.NOT_FOUND,
+        message: ERROR_MESSAGES.USER_NOT_FOUND,
+      });
     }
 
     const passOk = await bcrypt.compare(password, user.password);
 
     if (!passOk) {
-      throw new BadRequestException(ERROR_MESSAGES.INCORRECT_PASSWORD);
+      throw new RpcException({
+        code: status.UNAUTHENTICATED,
+        message: ERROR_MESSAGES.INCORRECT_PASSWORD,
+      });
     }
 
     return user;

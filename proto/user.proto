@@ -100,3 +100,8 @@ message GetUsersResponse {
     repeated UserProto users = 1;
     int32 totalCount = 2;   
 }
+
+message GrpcError {
+    int32 code = 1;
+    string details = 2;
+}

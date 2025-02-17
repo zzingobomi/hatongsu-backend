@@ -97,6 +97,11 @@ export interface GetUsersResponse {
   totalCount: number;
 }
 
+export interface GrpcError {
+  code: number;
+  details: string;
+}
+
 export const USER_PACKAGE_NAME = "user";
 
 export interface AuthServiceClient {
